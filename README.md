@@ -1,5 +1,39 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+
+# ♻️ Recycle-Bin App
+
+Aplikasi web berbasis **AI + Web Modern** untuk pengelolaan dan analisis data terkait Recycle-Bin.  
+Project ini menggunakan **Next.js 16**, **Prisma ORM**, dan **FastAPI** untuk model AI/ML.
+
+---
+
+## 🚀 Tech Stack
+
+### Frontend & Backend (Web)
+- **Next.js**: v16 (App Router)
+- **React**: v18
+- **TypeScript**
+- **Tailwind CSS**
+- **shadcn/ui**
+- **lucide-react (icons)**
+- **Framer Motion (animation)**
+
+### Database
+- **Prisma ORM**: v5+
+- **Database**: SQLite / PostgreSQL
+
+### Artificial Intelligence
+- **Python**: 3.10+
+- **FastAPI**
+- **TensorFlow / PyTorch** (opsional, sesuai model)
+- **Uvicorn**
+
+---
+
+## 📂 Struktur Repository
+
+
 ## Getting Started
 
 First, run the development server:
