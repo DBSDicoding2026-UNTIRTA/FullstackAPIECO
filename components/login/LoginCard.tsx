@@ -1,16 +1,46 @@
 "use client";
 
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 import AppLogo from "@/components/shared/AppLogo";
 import GoogleLoginButton from "@/components/login/GoogleLoginButton";
 
 export default function LoginCard() {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    // TODO: Integrasikan login email/password ke API auth Pilah Yuk!!
-    // TODO: Setelah auth valid, arahkan user ke dashboard
+
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/dashboard",
+      });
+
+      if (result?.error) {
+        setErrorMessage("Email atau password salah.");
+        return;
+      }
+
+      router.replace(result?.url ?? "/dashboard");
+      router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -68,11 +98,14 @@ export default function LoginCard() {
 
         <button
           type="submit"
+          disabled={isSubmitting}
           className="h-11 w-full rounded-xl bg-linear-to-r from-emerald-500 via-emerald-500 to-lime-500 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:brightness-105 active:scale-[0.99]"
         >
-          Masuk
+          {isSubmitting ? "Memproses..." : "Masuk"}
         </button>
       </form>
+
+      {errorMessage ? <p className="mt-3 text-sm text-red-600">{errorMessage}</p> : null}
 
       <div className="my-5 flex items-center gap-3" aria-hidden="true">
         <span className="h-px flex-1 bg-slate-200" />

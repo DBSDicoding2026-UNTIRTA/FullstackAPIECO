@@ -1,9 +1,12 @@
 "use client";
 
+import { signIn } from "next-auth/react";
+
 export default function GoogleLoginButton() {
-  const handleGoogleLogin = (): void => {
-    // TODO: Integrasikan Google Auth dengan signIn("google")
-    // TODO: Setelah Google Auth valid, simpan user ke database dengan Prisma
+  const handleGoogleLogin = async (): Promise<void> => {
+    await signIn("google", {
+      callbackUrl: "/dashboard",
+    });
   };
 
   return (

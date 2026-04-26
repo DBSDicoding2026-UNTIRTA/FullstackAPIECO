@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import DashboardShell from "../../components/dashboard/DashboardShell";
@@ -9,6 +11,7 @@ import StatCard from "@/components/dashboard/StatCard";
 import UploadCard from "@/components/dashboard/UploadCard";
 import AppLogo from "@/components/shared/AppLogo";
 import Container from "@/components/shared/Container";
+import { authOptions } from "@/lib/auth";
 import {
   DASHBOARD_STATS,
   DASHBOARD_USER,
@@ -17,7 +20,21 @@ import {
   WEEKLY_CHALLENGES,
 } from "@/data/dashboard";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  // TODO: profile completion nanti.
+  // TODO: update umur nanti.
+  // TODO: integrasi statistik user nanti.
+  const dashboardUser = {
+    ...DASHBOARD_USER,
+    name: session.user?.name ?? DASHBOARD_USER.name,
+  };
+
   return (
     <DashboardShell>
       <header className="sticky top-0 z-40 border-b border-emerald-100/80 bg-white/90 backdrop-blur-sm">
@@ -33,7 +50,7 @@ export default function DashboardPage() {
       </header>
 
       <Container className="relative z-10 space-y-6 py-6 sm:py-8 lg:space-y-7">
-        <DashboardHeader user={DASHBOARD_USER} />
+        <DashboardHeader user={dashboardUser} />
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {DASHBOARD_STATS.map((item, index) => (

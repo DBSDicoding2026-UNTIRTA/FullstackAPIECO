@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useRef, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import gsap from "gsap";
 
 import AppLogo from "@/components/shared/AppLogo";
 
 export default function RegisterCard() {
   const cardRef = useRef<HTMLElement | null>(null);
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -45,10 +50,57 @@ export default function RegisterCard() {
     };
   }, []);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    // TODO: hubungkan submit register ke API backend
-    // TODO: simpan user ke database menggunakan Prisma
+
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const ageRaw = String(formData.get("age") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+    const age = ageRaw === "" ? null : Number(ageRaw);
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          age,
+          password,
+        }),
+      });
+
+      const result: { message?: string } = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(result.message ?? "Register gagal.");
+        return;
+      }
+
+      const signInResult = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/dashboard",
+      });
+
+      if (signInResult?.error) {
+        router.replace("/login");
+        return;
+      }
+
+      router.replace(signInResult?.url ?? "/dashboard");
+      router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -101,7 +153,7 @@ export default function RegisterCard() {
 
         <div className="space-y-2" data-register-input>
           <label htmlFor="age" className="text-sm font-medium text-slate-800">
-            Umur
+            Umur <span className="text-slate-500">(opsional)</span>
           </label>
           <input
             id="age"
@@ -110,7 +162,6 @@ export default function RegisterCard() {
             inputMode="numeric"
             min={8}
             max={120}
-            required
             placeholder="Contoh: 21"
             className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70"
           />
@@ -134,12 +185,15 @@ export default function RegisterCard() {
         <div data-register-action>
           <button
             type="submit"
+            disabled={isSubmitting}
             className="h-11 w-full rounded-xl bg-linear-to-r from-emerald-500 via-emerald-500 to-lime-500 text-sm font-semibold text-white shadow-lg shadow-emerald-900/25 transition hover:brightness-105 active:scale-[0.99]"
           >
-            Daftar
+            {isSubmitting ? "Memproses..." : "Daftar"}
           </button>
         </div>
       </form>
+
+      {errorMessage ? <p className="mt-3 text-sm text-red-600">{errorMessage}</p> : null}
 
       <footer className="mt-6 text-center text-sm text-slate-600" data-register-action>
         <p>
