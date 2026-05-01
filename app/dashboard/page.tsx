@@ -6,10 +6,9 @@ import BadgeCard from "@/components/dashboard/BadgeCard";
 import ChallengeProgress from "@/components/dashboard/ChallengeProgress";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import LeaderboardMini from "@/components/dashboard/LeaderboardMini";
-import LogoutButton from "@/components/dashboard/LogoutButton";
 import StatCard from "@/components/dashboard/StatCard";
 import UploadCard from "@/components/dashboard/UploadCard";
-import AppLogo from "@/components/shared/AppLogo";
+import AppNavbar from "@/components/shared/AppNavbar";
 import Container from "@/components/shared/Container";
 import { authOptions } from "@/lib/auth";
 import {
@@ -27,6 +26,10 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  if (session.user?.role === "ADMIN") {
+    redirect("/admin");
+  }
+
   // TODO: profile completion nanti.
   // TODO: update umur nanti.
   // TODO: integrasi statistik user nanti.
@@ -35,14 +38,15 @@ export default async function DashboardPage() {
     name: session.user?.name ?? DASHBOARD_USER.name,
   };
 
+  const navbarUser = {
+    name: session.user?.name ?? null,
+    image: session.user?.image ?? null,
+    role: session.user?.role ?? "USER",
+  };
+
   return (
     <DashboardShell>
-      <header className="sticky top-0 z-40 border-b border-emerald-100/80 bg-white/90 backdrop-blur-sm">
-        <Container className="flex items-center justify-between py-4">
-          <AppLogo href="/" />
-          <LogoutButton />
-        </Container>
-      </header>
+      <AppNavbar user={navbarUser} />
 
       <Container className="relative z-10 space-y-6 py-6 sm:py-8 lg:space-y-7">
         <DashboardHeader user={dashboardUser} />

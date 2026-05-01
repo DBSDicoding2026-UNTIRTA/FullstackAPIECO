@@ -7,6 +7,9 @@ import ImpactStatsSection from '@/components/landing/ImpactStatsSection';
 import LeaderboardPreview from '@/components/landing/LeaderboardPreview';
 import FinalCtaSection from '@/components/landing/FinalCtaSection';
 import Footer from '@/components/landing/Footer';
+import { getServerSession } from 'next-auth';
+
+import { authOptions } from '@/lib/auth';
 
 export const metadata = {
   title: 'Pilah Yuk!! - Platform Gamifikasi Daur Ulang dengan AI',
@@ -22,10 +25,15 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+
+  const ctaLabel = session ? 'Dashboard' : 'Login';
+  const ctaHref = session ? (session.user?.role === 'ADMIN' ? '/admin' : '/dashboard') : '/login';
+
   return (
     <main className="min-h-screen bg-white">
-      <Navbar />
+      <Navbar ctaLabel={ctaLabel} ctaHref={ctaHref} />
       <HeroSection />
       <HowItWorksSection />
       <FeaturesSection />

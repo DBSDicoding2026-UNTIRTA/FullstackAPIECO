@@ -3,7 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-export default function Navbar() {
+interface NavbarProps {
+  readonly ctaLabel: 'Login' | 'Dashboard';
+  readonly ctaHref: '/login' | '/dashboard' | '/admin';
+}
+
+export default function Navbar({ ctaLabel, ctaHref }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
@@ -19,7 +24,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <span className="text-2xl">♻️</span>
             <Link href="/" className="text-xl md:text-2xl font-bold text-emerald-600">
               Pilah Yuk!!
@@ -42,9 +47,12 @@ export default function Navbar() {
 
           {/* Desktop CTA Button */}
           <div className="hidden md:block">
-            <button className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300 transform hover:scale-105">
-              Coba Sekarang
-            </button>
+            <Link
+              href={ctaHref}
+              className="inline-flex px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300 transform hover:scale-105"
+            >
+              {ctaLabel}
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -79,9 +87,13 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
-              <button className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all">
-                Coba Sekarang
-              </button>
+              <Link
+                href={ctaHref}
+                className="mt-4 block w-full rounded-lg bg-linear-to-r from-emerald-500 to-teal-600 px-4 py-2 text-center font-semibold text-white transition-all hover:shadow-lg"
+                onClick={() => setIsOpen(false)}
+              >
+                {ctaLabel}
+              </Link>
             </div>
           </div>
         )}

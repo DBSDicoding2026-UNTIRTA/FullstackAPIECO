@@ -12,6 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -20,6 +25,7 @@ model User {
   image         String?
   age           Int?
   password      String?
+  role          Role      @default(USER)
   points        Int       @default(0)
   level         Int       @default(1)
   accounts      Account[]
