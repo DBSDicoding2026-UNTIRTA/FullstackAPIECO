@@ -5,6 +5,7 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import DemoPreviewSection from '@/components/landing/DemoPreviewSection';
 import ImpactStatsSection from '@/components/landing/ImpactStatsSection';
 import LeaderboardPreview from '@/components/landing/LeaderboardPreview';
+import TeamSection from '@/components/landing/TeamSection';
 import FinalCtaSection from '@/components/landing/FinalCtaSection';
 import Footer from '@/components/landing/Footer';
 import { getServerSession } from 'next-auth';
@@ -40,6 +41,7 @@ export default async function Home() {
       <DemoPreviewSection />
       <ImpactStatsSection />
       <LeaderboardPreview />
+      <TeamSection />
       <FinalCtaSection />
       <Footer />
     </main>
