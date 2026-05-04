@@ -3,9 +3,16 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
+
+const moduleSelect = {
+  id: true,
+  title: true,
+  order: true,
+} as const;
 
 const quizInputSchema = z.object({
+  moduleId: z.string().trim().min(1, "Modul wajib dipilih."),
   question: z.string().trim().min(1, "Pertanyaan wajib diisi."),
   optionA: z.string().trim().min(1, "Pilihan A wajib diisi."),
   optionB: z.string().trim().min(1, "Pilihan B wajib diisi."),
@@ -38,6 +45,22 @@ export async function GET() {
   const quizzes = await prisma.quizQuestion.findMany({
     orderBy: {
       createdAt: "desc",
+    },
+    select: {
+      id: true,
+      moduleId: true,
+      question: true,
+      optionA: true,
+      optionB: true,
+      optionC: true,
+      optionD: true,
+      correctAnswer: true,
+      points: true,
+      createdAt: true,
+      updatedAt: true,
+      module: {
+        select: moduleSelect,
+      },
     },
   });
 
@@ -79,8 +102,25 @@ export async function POST(req: Request) {
 
   const quizData = parsedBody.data;
 
+  const moduleRecord = await prisma.quizModule.findFirst({
+    where: {
+      id: quizData.moduleId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!moduleRecord) {
+    return NextResponse.json(
+      { message: "Modul tidak ditemukan." },
+      { status: 404 }
+    );
+  }
+
   const quiz = await prisma.quizQuestion.create({
     data: {
+      moduleId: moduleRecord.id,
       question: quizData.question,
       optionA: quizData.optionA,
       optionB: quizData.optionB,
@@ -88,6 +128,11 @@ export async function POST(req: Request) {
       optionD: quizData.optionD,
       correctAnswer: quizData.correctAnswer,
       points: quizData.points,
+    },
+    include: {
+      module: {
+        select: moduleSelect,
+      },
     },
   });
 

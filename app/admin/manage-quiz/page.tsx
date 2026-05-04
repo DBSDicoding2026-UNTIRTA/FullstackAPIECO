@@ -48,7 +48,7 @@ export default async function ManageQuizPage() {
             </div>
           </section>
 
-          <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,740px)_minmax(0,1fr)]">
             <QuizForm />
             <QuizList />
           </div>

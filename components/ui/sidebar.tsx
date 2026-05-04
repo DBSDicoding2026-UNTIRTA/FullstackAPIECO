@@ -7,7 +7,7 @@ import {
   type LucideIcon,
   HelpCircle,
   Home,
-  UploadCloud,
+  Brain,
   Trophy,
   Award,
   BarChart2,
@@ -30,7 +30,7 @@ interface RouteItem {
 
 const userRoutes: RouteItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
-  { label: "Upload", href: "/dashboard/upload", icon: UploadCloud },
+  { label: "Quiz", href: "/quiz", icon: Brain }, // ✅ sudah diganti
   { label: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
   { label: "Badge", href: "/dashboard/badges", icon: Award },
   { label: "Statistik", href: "/dashboard/statistics", icon: BarChart2 },
@@ -55,7 +55,7 @@ function isActive(pathname: string, href: string) {
 
 export interface SidebarProps {
   variant?: Variant;
-  userName?: string; // 👈 hanya nama user
+  userName?: string;
 }
 
 export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
@@ -64,7 +64,7 @@ export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
 
   return (
     <>
-      {/* Sidebar Tengah (VERTICAL CENTER) */}
+      {/* Sidebar Tengah */}
       <aside
         className="
         fixed left-6 top-1/2 -translate-y-1/2
@@ -97,7 +97,7 @@ export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
           ))}
         </nav>
 
-        {/* Profile (Nama saja) */}
+        {/* Profile */}
         <div className="mt-2 flex flex-col items-center gap-1 text-center">
           <div className="h-px w-8 bg-emerald-100" />
           <p className="text-[10px] font-medium text-emerald-700 truncate max-w-[70px]">
@@ -109,7 +109,7 @@ export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
         <NavIcon icon={HelpCircle} label="Help" variant="sidebar" active={false} />
       </aside>
 
-      {/* Mobile Bottom Nav */}
+      {/* Mobile */}
       <div className="fixed bottom-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 px-3 md:hidden">
         <nav className="flex justify-between rounded-3xl border border-emerald-100 bg-white/90 px-2 py-2 shadow-md">
           {routes.map((r) => (

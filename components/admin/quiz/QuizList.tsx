@@ -10,7 +10,8 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import QuizCard, { type QuizQuestionRecord } from "./QuizCard";
+import QuizCard from "./QuizCard";
+import type { AdminQuizModule, AdminQuizRecord } from "./types";
 
 const refreshEventName = "admin-quiz:changed";
 const itemsPerPage = 3;
@@ -28,24 +29,59 @@ async function fetchQuizzes() {
     throw new Error(payload?.message ?? "Gagal memuat daftar quiz.");
   }
 
-  return (await res.json()) as QuizQuestionRecord[];
+  return (await res.json()) as AdminQuizRecord[];
+}
+
+async function fetchModules() {
+  const res = await fetch("/api/admin/quiz/modules", {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const payload = (await res.json().catch(() => null)) as
+      | { message?: string }
+      | null;
+
+    throw new Error(payload?.message ?? "Gagal memuat daftar modul.");
+  }
+
+  return (await res.json()) as AdminQuizModule[];
 }
 
 export default function QuizList() {
-  const [quizzes, setQuizzes] = useState<QuizQuestionRecord[]>([]);
+  const [quizzes, setQuizzes] = useState<AdminQuizRecord[]>([]);
+  const [modules, setModules] = useState<AdminQuizModule[]>([]);
+  const [selectedModuleId, setSelectedModuleId] = useState("ALL");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshCount, setRefreshCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.max(1, Math.ceil(quizzes.length / itemsPerPage));
+  const selectedModule = useMemo(() => {
+    if (selectedModuleId === "ALL") return null;
+
+    return modules.find((module) => module.id === selectedModuleId) ?? null;
+  }, [modules, selectedModuleId]);
+
+  const filteredQuizzes = useMemo(() => {
+    if (selectedModuleId === "ALL") {
+      return quizzes;
+    }
+
+    return quizzes.filter((quiz) => quiz.moduleId === selectedModuleId);
+  }, [quizzes, selectedModuleId]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredQuizzes.length / itemsPerPage)
+  );
 
   const paginatedQuizzes = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
-    return quizzes.slice(startIndex, endIndex);
-  }, [quizzes, currentPage]);
+    return filteredQuizzes.slice(startIndex, endIndex);
+  }, [filteredQuizzes, currentPage]);
 
   useEffect(() => {
     let active = true;
@@ -55,10 +91,14 @@ export default function QuizList() {
       setError(null);
 
       try {
-        const data = await fetchQuizzes();
+        const [quizData, moduleData] = await Promise.all([
+          fetchQuizzes(),
+          fetchModules(),
+        ]);
 
         if (active) {
-          setQuizzes(data);
+          setQuizzes(quizData);
+          setModules(moduleData);
           setCurrentPage(1);
         }
       } catch (loadError) {
@@ -95,6 +135,11 @@ export default function QuizList() {
     };
   }, []);
 
+  function handleChangeModule(moduleId: string) {
+    setSelectedModuleId(moduleId);
+    setCurrentPage(1);
+  }
+
   function goToPage(page: number) {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
@@ -102,25 +147,58 @@ export default function QuizList() {
 
   return (
     <section className="rounded-[2rem] border border-emerald-100 bg-white p-6 shadow-[0_18px_48px_-34px_rgba(16,185,129,0.35)]">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-emerald-600" />
             <h2 className="text-xl font-black tracking-tight">Daftar Quiz</h2>
           </div>
           <p className="mt-1 text-sm text-slate-500">
-            Pertanyaan yang tersedia untuk user.
+            Pertanyaan tampil sesuai modul yang dipilih.
           </p>
         </div>
 
         <button
           type="button"
           onClick={() => setRefreshCount((current) => current + 1)}
-          className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 transition hover:bg-emerald-100"
+          className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 transition hover:bg-emerald-100"
         >
           <RefreshCw className="h-4 w-4" />
-          {quizzes.length} Quiz
+          {filteredQuizzes.length} Quiz
         </button>
+      </div>
+
+      <div className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+        <label className="text-sm font-black text-slate-700">
+          Filter berdasarkan modul
+        </label>
+
+        <select
+          value={selectedModuleId}
+          onChange={(event) => handleChangeModule(event.target.value)}
+          className="mt-2 w-full rounded-2xl border border-emerald-100 bg-white p-3 text-sm font-semibold outline-none focus:border-emerald-500"
+        >
+          <option value="ALL">Semua Modul</option>
+          {modules.map((module) => (
+            <option key={module.id} value={module.id}>
+              Modul {module.order}: {module.title}
+            </option>
+          ))}
+        </select>
+
+        {selectedModule ? (
+          <div className="mt-3 rounded-2xl bg-white p-4 text-sm text-slate-600">
+            <p className="font-black text-slate-900">
+              Modul {selectedModule.order}: {selectedModule.title}
+            </p>
+            <p className="mt-1">
+              {selectedModule.description ?? "Belum ada deskripsi modul."}
+            </p>
+            <p className="mt-2 text-xs font-bold text-emerald-700">
+              Jumlah quiz di modul ini: {filteredQuizzes.length}
+            </p>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-6 space-y-4">
@@ -136,22 +214,23 @@ export default function QuizList() {
               {error}
             </div>
           </div>
-        ) : quizzes.length === 0 ? (
+        ) : filteredQuizzes.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-emerald-200 p-8 text-center text-sm text-slate-500">
-            Belum ada quiz.
+            Belum ada quiz untuk modul ini.
           </div>
         ) : (
           paginatedQuizzes.map((quiz, index) => (
             <QuizCard
               key={quiz.id}
               quiz={quiz}
+              modules={modules}
               index={(currentPage - 1) * itemsPerPage + index}
             />
           ))
         )}
       </div>
 
-      {!loading && !error && quizzes.length > itemsPerPage ? (
+      {!loading && !error && filteredQuizzes.length > itemsPerPage ? (
         <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-emerald-100 pt-5 sm:flex-row">
           <p className="text-sm font-medium text-slate-500">
             Halaman {currentPage} dari {totalPages}
