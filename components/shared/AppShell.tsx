@@ -3,14 +3,19 @@
 import React from "react";
 import { Sidebar } from "@/components/ui/sidebar";
 
-type AppShellProps = {
+interface AppShellProps {
   children: React.ReactNode;
   variant?: "user" | "admin";
-};
+  userName?: string;
+}
 
-export default function AppShell({ children, variant = "user" }: AppShellProps) {
+export default function AppShell({
+  children,
+  variant = "user",
+  userName,
+}: AppShellProps) {
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-[#f4faf6]">
       <Sidebar variant={variant} />
 
       <main

@@ -9,7 +9,6 @@ import {
   Home,
   Brain,
   Trophy,
-  Award,
   BarChart2,
   Settings,
   ShieldCheck,
@@ -30,9 +29,9 @@ interface RouteItem {
 
 const userRoutes: RouteItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
-  { label: "Quiz", href: "/quiz", icon: Brain }, // ✅ sudah diganti
+  { label: "Quiz", href: "/quiz", icon: Brain },
+  { label: "AI Analyst", href: "/ai-analyst", icon: Cpu },
   { label: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
-  { label: "Badge", href: "/dashboard/badges", icon: Award },
   { label: "Statistik", href: "/dashboard/statistics", icon: BarChart2 },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
@@ -100,7 +99,7 @@ export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
         {/* Profile */}
         <div className="mt-2 flex flex-col items-center gap-1 text-center">
           <div className="h-px w-8 bg-emerald-100" />
-          <p className="text-[10px] font-medium text-emerald-700 truncate max-w-[70px]">
+          <p className="text-[10px] font-medium text-emerald-700 truncate max-w-17.5">
             {userName}
           </p>
         </div>
