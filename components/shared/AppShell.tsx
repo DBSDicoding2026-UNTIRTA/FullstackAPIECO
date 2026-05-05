@@ -12,7 +12,6 @@ interface AppShellProps {
 export default function AppShell({
   children,
   variant = "user",
-  userName,
 }: AppShellProps) {
   return (
     <div className="min-h-screen bg-[#f4faf6]">

@@ -3,11 +3,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const AI_MODEL_URL = process.env.AI_MODEL_URL || "http://localhost:8000/predict";
+const DEFAULT_AI_MODEL_URL = "https://kazone-pilahyuk.hf.space/predict";
+const AI_MODEL_TIMEOUT_MS = 60_000;
 
 interface FastAPIResponse {
   label: string;
   confidence: number;
+}
+
+interface PilahYukModelResponse {
+  status?: string;
+  label?: unknown;
+  result?: unknown;
+  jenis_sampah?: unknown;
+  confidence?: unknown;
+  data?: {
+    label?: unknown;
+    result?: unknown;
+    jenis_sampah?: unknown;
+    confidence?: unknown;
+  };
+}
+
+function getAiModelUrl() {
+  const configuredUrl = process.env.AI_MODEL_URL || DEFAULT_AI_MODEL_URL;
+  const modelUrl = new URL(configuredUrl);
+
+  if (modelUrl.pathname === "/" || modelUrl.pathname === "") {
+    modelUrl.pathname = "/predict";
+  }
+
+  return modelUrl.toString();
 }
 
 function formatWasteLabel(label: string) {
@@ -20,20 +46,78 @@ function formatWasteLabel(label: string) {
   return "Organik";
 }
 
+function readString(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : null;
+}
+
+function readConfidence(value: unknown) {
+  const confidence =
+    typeof value === "number"
+      ? value
+      : typeof value === "string"
+        ? Number(value)
+        : NaN;
+
+  if (!Number.isFinite(confidence)) {
+    return null;
+  }
+
+  const normalizedConfidence = confidence > 1 ? confidence / 100 : confidence;
+  return Math.min(Math.max(normalizedConfidence, 0), 1);
+}
+
+function normalizeModelResponse(payload: PilahYukModelResponse): FastAPIResponse {
+  const label =
+    readString(payload.data?.jenis_sampah) ||
+    readString(payload.data?.label) ||
+    readString(payload.data?.result) ||
+    readString(payload.jenis_sampah) ||
+    readString(payload.label) ||
+    readString(payload.result);
+
+  const confidence = readConfidence(
+    payload.data?.confidence ?? payload.confidence
+  );
+
+  if (!label || confidence === null) {
+    throw new Error("Model response format is invalid");
+  }
+
+  return { label, confidence };
+}
+
 async function classifyWaste(imageFile: File): Promise<FastAPIResponse> {
   const formData = new FormData();
   formData.append("file", imageFile);
 
-  const response = await fetch(AI_MODEL_URL, {
-    method: "POST",
-    body: formData,
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_MODEL_TIMEOUT_MS);
 
-  if (!response.ok) {
-    throw new Error(`FastAPI error: ${response.statusText}`);
+  let response: Response;
+
+  try {
+    response = await fetch(getAiModelUrl(), {
+      method: "POST",
+      body: formData,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
   }
 
-  return response.json();
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => response.statusText);
+    throw new Error(
+      `AI model request failed (${response.status}): ${
+        errorText || response.statusText
+      }`
+    );
+  }
+
+  const payload = (await response.json()) as PilahYukModelResponse;
+  return normalizeModelResponse(payload);
 }
 
 export async function POST(request: NextRequest) {

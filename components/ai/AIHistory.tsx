@@ -34,7 +34,13 @@ export default function AIHistory({ refreshTrigger = 0 }: AIHistoryProps) {
   };
 
   useEffect(() => {
-    fetchHistory();
+    const timeoutId = window.setTimeout(() => {
+      void fetchHistory();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [refreshTrigger]);
 
   if (loading && history.length === 0) {

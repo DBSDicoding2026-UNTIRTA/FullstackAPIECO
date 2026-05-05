@@ -96,7 +96,13 @@ export default function UserQuizClient() {
   }
 
   useEffect(() => {
-    void loadModules();
+    const timeoutId = window.setTimeout(() => {
+      void loadModules();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, []);
 
   useEffect(() => {
