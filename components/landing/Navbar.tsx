@@ -2,25 +2,27 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSettings } from '@/hooks/use-settings';
 
 interface NavbarProps {
-  readonly ctaLabel: 'Login' | 'Dashboard';
+  readonly ctaLabel: string;
   readonly ctaHref: '/login' | '/dashboard' | '/admin';
 }
 
 export default function Navbar({ ctaLabel, ctaHref }: NavbarProps) {
+  const { t } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Beranda', href: '#home' },
-    { label: 'Cara Kerja', href: '#how-it-works' },
-    { label: 'Fitur', href: '#features' },
-    { label: 'Statistik', href: '#stats' },
-    { label: 'Mulai', href: '#cta' },
+    { label: t('landing.nav.home'), href: '#home' },
+    { label: t('landing.nav.how'), href: '#how-it-works' },
+    { label: t('landing.nav.features'), href: '#features' },
+    { label: t('landing.nav.stats'), href: '#stats' },
+    { label: t('landing.nav.start'), href: '#cta' },
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gray-100 bg-white transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950/90">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
@@ -37,10 +39,10 @@ export default function Navbar({ ctaLabel, ctaHref }: NavbarProps) {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-gray-700 hover:text-emerald-600 transition-colors text-sm font-medium relative group"
+                className="text-gray-700 transition-colors text-sm font-medium relative group hover:text-emerald-600 dark:text-slate-200 dark:hover:text-emerald-300"
               >
                 {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-600 group-hover:w-full transition-all duration-300" />
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-600 transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
           </div>
@@ -49,7 +51,7 @@ export default function Navbar({ ctaLabel, ctaHref }: NavbarProps) {
           <div className="hidden md:block">
             <Link
               href={ctaHref}
-              className="inline-flex px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300 transform hover:scale-105"
+              className="inline-flex px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:bg-emerald-700"
             >
               {ctaLabel}
             </Link>
@@ -59,7 +61,7 @@ export default function Navbar({ ctaLabel, ctaHref }: NavbarProps) {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 transition-colors hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-slate-900"
               aria-expanded="false"
             >
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,13 +77,13 @@ export default function Navbar({ ctaLabel, ctaHref }: NavbarProps) {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden border-t border-gray-100">
+          <div className="md:hidden border-t border-gray-100 dark:border-slate-800">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="block px-3 py-2 rounded-md text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                  className="block px-3 py-2 rounded-md text-gray-700 transition-colors hover:bg-emerald-50 hover:text-emerald-600 dark:text-slate-200 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-300"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.label}

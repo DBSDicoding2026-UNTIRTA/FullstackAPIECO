@@ -7,10 +7,12 @@ import { signIn } from "next-auth/react";
 import gsap from "gsap";
 
 import AppLogo from "@/components/shared/AppLogo";
+import { useSettings } from "@/hooks/use-settings";
 
 export default function RegisterCard() {
   const cardRef = useRef<HTMLElement | null>(null);
   const router = useRouter();
+  const { t } = useSettings();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,7 +82,7 @@ export default function RegisterCard() {
       const result: { message?: string } = await response.json();
 
       if (!response.ok) {
-        setErrorMessage(result.message ?? "Register gagal.");
+        setErrorMessage(result.message ?? t("auth.error.registerFailed"));
         return;
       }
 
@@ -107,23 +109,25 @@ export default function RegisterCard() {
     <section
       ref={cardRef}
       data-register-card
-      className="w-full max-w-md rounded-2xl border border-emerald-200/30 bg-white/95 p-6 shadow-2xl shadow-emerald-950/20 backdrop-blur-md sm:p-8"
+      className="w-full max-w-md rounded-2xl border border-emerald-200/30 bg-white/95 p-6 shadow-2xl shadow-emerald-950/20 backdrop-blur-md sm:p-8 dark:border-emerald-900/50 dark:bg-slate-900/90"
     >
       <header className="text-center">
         <div className="mx-auto inline-flex">
           <AppLogo href="/" />
         </div>
 
-        <h1 className="mt-5 text-2xl font-bold tracking-tight text-slate-900">Buat Akun Pilah Yuk!!</h1>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-          Mulai pilah sampah, kumpulkan poin, dan bantu bumi jadi lebih bersih.
+        <h1 className="mt-5 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          {t("auth.register.title")}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          {t("auth.register.subtitle")}
         </p>
       </header>
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-2" data-register-input>
-          <label htmlFor="name" className="text-sm font-medium text-slate-800">
-            Nama
+          <label htmlFor="name" className="text-sm font-medium text-slate-800 dark:text-slate-200">
+            {t("auth.label.name")}
           </label>
           <input
             id="name"
@@ -131,14 +135,14 @@ export default function RegisterCard() {
             type="text"
             required
             autoComplete="name"
-            placeholder="Nama lengkap"
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70"
+            placeholder={t("auth.placeholder.fullName")}
+            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         </div>
 
         <div className="space-y-2" data-register-input>
-          <label htmlFor="email" className="text-sm font-medium text-slate-800">
-            Email
+          <label htmlFor="email" className="text-sm font-medium text-slate-800 dark:text-slate-200">
+            {t("auth.label.email")}
           </label>
           <input
             id="email"
@@ -146,14 +150,14 @@ export default function RegisterCard() {
             type="email"
             required
             autoComplete="email"
-            placeholder="nama@email.com"
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70"
+            placeholder={t("auth.placeholder.email")}
+            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         </div>
 
         <div className="space-y-2" data-register-input>
-          <label htmlFor="age" className="text-sm font-medium text-slate-800">
-            Umur <span className="text-slate-500">(opsional)</span>
+          <label htmlFor="age" className="text-sm font-medium text-slate-800 dark:text-slate-200">
+            {t("auth.label.age")} <span className="text-slate-500">{t("auth.optional")}</span>
           </label>
           <input
             id="age"
@@ -162,14 +166,14 @@ export default function RegisterCard() {
             inputMode="numeric"
             min={8}
             max={120}
-            placeholder="Contoh: 21"
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70"
+            placeholder={t("auth.placeholder.age")}
+            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         </div>
 
         <div className="space-y-2" data-register-input>
-          <label htmlFor="password" className="text-sm font-medium text-slate-800">
-            Password
+          <label htmlFor="password" className="text-sm font-medium text-slate-800 dark:text-slate-200">
+            {t("auth.label.password")}
           </label>
           <input
             id="password"
@@ -177,8 +181,8 @@ export default function RegisterCard() {
             type="password"
             required
             autoComplete="new-password"
-            placeholder="Buat password aman"
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70"
+            placeholder={t("auth.placeholder.password")}
+            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200/70 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         </div>
 
@@ -188,18 +192,18 @@ export default function RegisterCard() {
             disabled={isSubmitting}
             className="h-11 w-full rounded-xl bg-linear-to-r from-emerald-500 via-emerald-500 to-lime-500 text-sm font-semibold text-white shadow-lg shadow-emerald-900/25 transition hover:brightness-105 active:scale-[0.99]"
           >
-            {isSubmitting ? "Memproses..." : "Daftar"}
+            {isSubmitting ? t("common.processing") : t("common.register")}
           </button>
         </div>
       </form>
 
       {errorMessage ? <p className="mt-3 text-sm text-red-600">{errorMessage}</p> : null}
 
-      <footer className="mt-6 text-center text-sm text-slate-600" data-register-action>
+      <footer className="mt-6 text-center text-sm text-slate-600 dark:text-slate-300" data-register-action>
         <p>
-          Sudah punya akun?{" "}
+          {t("auth.register.haveAccount")} {" "}
           <Link href="/login" className="font-semibold text-emerald-700 transition hover:text-emerald-600 hover:underline">
-            Masuk
+            {t("common.login")}
           </Link>
         </p>
       </footer>

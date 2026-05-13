@@ -9,6 +9,7 @@ import QuizProgress from "./QuizProgress";
 import QuizQuestionCard, { type UserQuizQuestion } from "./QuizQuestionCard";
 import QuizResultPanel from "./QuizResultPanel";
 import QuizSummary from "./QuizSummary";
+import { useSettings } from "@/hooks/use-settings";
 
 type AnswerResult = {
   isCorrect: boolean;
@@ -18,39 +19,8 @@ type AnswerResult = {
   level: number;
 };
 
-async function fetchModules(): Promise<QuizModuleRecord[]> {
-  const res = await fetch("/api/quiz/modules", {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    const payload = (await res.json().catch(() => null)) as
-      | { message?: string }
-      | null;
-
-    throw new Error(payload?.message ?? "Gagal memuat modul.");
-  }
-
-  return (await res.json()) as QuizModuleRecord[];
-}
-
-async function fetchModuleQuizzes(moduleId: string): Promise<UserQuizQuestion[]> {
-  const res = await fetch(`/api/quiz?moduleId=${encodeURIComponent(moduleId)}`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    const payload = (await res.json().catch(() => null)) as
-      | { message?: string }
-      | null;
-
-    throw new Error(payload?.message ?? "Gagal memuat quiz.");
-  }
-
-  return (await res.json()) as UserQuizQuestion[];
-}
-
 export default function UserQuizClient() {
+  const { t } = useSettings();
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   const [modules, setModules] = useState<QuizModuleRecord[]>([]);
@@ -79,6 +49,38 @@ export default function UserQuizClient() {
     return Math.min(currentIndex + (result ? 1 : 0), quizzes.length);
   }, [currentIndex, quizzes.length, result]);
 
+  async function fetchModules(): Promise<QuizModuleRecord[]> {
+    const res = await fetch("/api/quiz/modules", {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const payload = (await res.json().catch(() => null)) as
+        | { message?: string }
+        | null;
+
+      throw new Error(payload?.message ?? t("quiz.error.loadModules"));
+    }
+
+    return (await res.json()) as QuizModuleRecord[];
+  }
+
+  async function fetchModuleQuizzes(moduleId: string): Promise<UserQuizQuestion[]> {
+    const res = await fetch(`/api/quiz?moduleId=${encodeURIComponent(moduleId)}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const payload = (await res.json().catch(() => null)) as
+        | { message?: string }
+        | null;
+
+      throw new Error(payload?.message ?? t("quiz.error.loadQuizzes"));
+    }
+
+    return (await res.json()) as UserQuizQuestion[];
+  }
+
   async function loadModules() {
     setLoadingModules(true);
     setError(null);
@@ -87,9 +89,7 @@ export default function UserQuizClient() {
       const data = await fetchModules();
       setModules(data);
     } catch (loadError) {
-      setError(
-        loadError instanceof Error ? loadError.message : "Gagal memuat modul."
-      );
+      setError(loadError instanceof Error ? loadError.message : t("quiz.error.loadModules"));
     } finally {
       setLoadingModules(false);
     }
@@ -133,9 +133,7 @@ export default function UserQuizClient() {
       const data = await fetchModuleQuizzes(moduleRecord.id);
       setQuizzes(data);
     } catch (loadError) {
-      setError(
-        loadError instanceof Error ? loadError.message : "Gagal memuat quiz."
-      );
+      setError(loadError instanceof Error ? loadError.message : t("quiz.error.loadQuizzes"));
     } finally {
       setLoadingQuizzes(false);
     }
@@ -179,7 +177,7 @@ export default function UserQuizClient() {
         | null;
 
       if (!res.ok || !payload) {
-        throw new Error(payload?.message ?? "Gagal mengecek jawaban.");
+        throw new Error(payload?.message ?? t("quiz.error.checkAnswer"));
       }
 
       setResult(payload);
@@ -196,7 +194,7 @@ export default function UserQuizClient() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "Gagal mengecek jawaban."
+          : t("quiz.error.checkAnswer")
       );
     } finally {
       setSubmitting(false);
@@ -211,9 +209,9 @@ export default function UserQuizClient() {
 
   if (loadingModules && modules.length === 0) {
     return (
-      <div className="flex items-center justify-center rounded-[2rem] border border-dashed border-emerald-200 bg-white px-6 py-16 text-sm font-bold text-slate-500">
+      <div className="flex items-center justify-center rounded-[2rem] border border-dashed border-emerald-200 bg-white px-6 py-16 text-sm font-bold text-slate-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-300">
         <Loader2 className="mr-2 h-5 w-5 animate-spin text-emerald-600" />
-        Memuat modul...
+        {t("quiz.loading.modules")}
       </div>
     );
   }
@@ -222,7 +220,7 @@ export default function UserQuizClient() {
     return (
       <div className="space-y-5" ref={cardRef}>
         {error ? (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700">
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-200">
             <div className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
               {error}
@@ -237,25 +235,25 @@ export default function UserQuizClient() {
 
   if (loadingQuizzes) {
     return (
-      <div className="flex items-center justify-center rounded-[2rem] border border-dashed border-emerald-200 bg-white px-6 py-16 text-sm font-bold text-slate-500">
+      <div className="flex items-center justify-center rounded-[2rem] border border-dashed border-emerald-200 bg-white px-6 py-16 text-sm font-bold text-slate-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-300">
         <Loader2 className="mr-2 h-5 w-5 animate-spin text-emerald-600" />
-        Memuat quiz modul...
+        {t("quiz.loading.quizzes")}
       </div>
     );
   }
 
   if (quizzes.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-dashed border-emerald-200 bg-white p-10 text-center text-sm font-bold text-slate-500">
+      <div className="rounded-[2rem] border border-dashed border-emerald-200 bg-white p-10 text-center text-sm font-bold text-slate-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-300">
         {error ? (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-700">
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-200">
             <div className="flex items-center justify-center gap-2 font-black">
               <AlertCircle className="h-5 w-5" />
               {error}
             </div>
           </div>
         ) : (
-          "Belum ada pertanyaan quiz pada modul ini."
+          t("quiz.modules.noQuestions")
         )}
         <div className="mt-4">
           <button
@@ -263,7 +261,7 @@ export default function UserQuizClient() {
             onClick={handleBackToModules}
             className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-3 font-black text-white transition hover:bg-emerald-700"
           >
-            Kembali ke Modul
+            {t("quiz.actions.backToModules")}
           </button>
         </div>
       </div>
@@ -286,26 +284,26 @@ export default function UserQuizClient() {
 
   return (
     <div className="space-y-5" ref={cardRef}>
-      <section className="rounded-[2rem] border border-emerald-100 bg-white p-5 shadow-[0_24px_64px_-36px_rgba(16,185,129,0.35)]">
+      <section className="rounded-[2rem] border border-emerald-100 bg-white p-5 shadow-[0_24px_64px_-36px_rgba(16,185,129,0.35)] dark:border-emerald-900/60 dark:bg-slate-900">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">
-              Modul Aktif
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">
+              {t("quiz.modules.active")}
             </p>
-            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               {selectedModule.title}
             </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              {selectedModule.description ?? "Kerjakan pertanyaan pada modul ini sampai selesai."}
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+              {selectedModule.description ?? t("quiz.modules.activeDescription")}
             </p>
           </div>
 
           <button
             type="button"
             onClick={handleBackToModules}
-            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700 transition hover:bg-emerald-100"
+            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700 transition hover:bg-emerald-100 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200"
           >
-            Kembali ke Modul
+            {t("quiz.actions.backToModules")}
           </button>
         </div>
       </section>
@@ -313,7 +311,7 @@ export default function UserQuizClient() {
       <QuizProgress current={progressValue} total={quizzes.length} />
 
       {error ? (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700">
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-200">
           {error}
         </div>
       ) : null}
@@ -340,7 +338,7 @@ export default function UserQuizClient() {
             onClick={handleNext}
             className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-5 py-4 font-black text-white transition hover:bg-emerald-700"
           >
-            Lanjut
+            {t("quiz.actions.next")}
             <ArrowRight className="h-5 w-5" />
           </button>
         </div>

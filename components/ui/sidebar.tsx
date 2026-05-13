@@ -11,13 +11,11 @@ import {
   Trophy,
   BarChart2,
   Settings,
-  ShieldCheck,
-  Users,
-  Database,
   Cpu,
   Recycle,
 } from "lucide-react";
 import { NavIcon } from "./NavIcon";
+import { useSettings } from "@/hooks/use-settings";
 
 type Variant = "user" | "admin";
 
@@ -27,28 +25,9 @@ interface RouteItem {
   icon: LucideIcon;
 }
 
-const userRoutes: RouteItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: Home },
-  { label: "Quiz", href: "/quiz", icon: Brain },
-  { label: "AI Analyst", href: "/ai-analyst", icon: Cpu },
-  { label: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
-  { label: "Statistik", href: "/dashboard/statistics", icon: BarChart2 },
-  { label: "Settings", href: "/settings", icon: Settings },
-];
-
-const adminRoutes: RouteItem[] = [
-  { label: "Admin", href: "/admin", icon: ShieldCheck },
-  { label: "Users", href: "/admin/users", icon: Users },
-  { label: "Dataset", href: "/admin/dataset", icon: Database },
-  { label: "Model", href: "/admin/model", icon: Cpu },
-  { label: "Settings", href: "/settings", icon: Settings },
-];
-
 function isActive(pathname: string, href: string) {
   if (href === "/dashboard")
     return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
-  if (href === "/admin")
-    return pathname === "/admin" || pathname.startsWith("/admin/");
   return pathname === href || pathname.startsWith(href + "/");
 }
 
@@ -59,7 +38,26 @@ export interface SidebarProps {
 
 export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
   const pathname = usePathname() || "/";
-  const routes = variant === "admin" ? adminRoutes : userRoutes;
+  const { profile, t } = useSettings();
+
+  /* User-only routes — admin uses its own AdminSidebar */
+  const routes: RouteItem[] = [
+    { label: t("nav.dashboard"), href: "/dashboard", icon: Home },
+    { label: t("nav.quiz"), href: "/quiz", icon: Brain },
+    { label: t("nav.aiAnalyst"), href: "/ai-analyst", icon: Cpu },
+    { label: t("nav.leaderboard"), href: "/dashboard/leaderboard", icon: Trophy },
+    { label: t("nav.statistics"), href: "/dashboard/statistics", icon: BarChart2 },
+    { label: t("nav.settings"), href: "/settings", icon: Settings },
+  ];
+  const mobileRoutes = [
+    routes[0],
+    routes[1],
+    routes[2],
+    routes[3],
+    routes[5],
+  ].filter(Boolean);
+
+  const displayName = profile.username || profile.name || userName;
 
   return (
     <>
@@ -73,11 +71,13 @@ export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
         bg-white/90 px-2 py-4
         shadow-[0_15px_40px_rgba(16,185,129,0.15)]
         backdrop-blur-xl
+        transition-colors duration-300
+        dark:border-emerald-900/60 dark:bg-slate-950/90
       "
       >
         {/* Logo */}
-        <Link href={variant === "admin" ? "/admin" : "/dashboard"}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
+        <Link href="/dashboard">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950">
             <Recycle className="h-5 w-5 text-emerald-600" />
           </div>
         </Link>
@@ -98,20 +98,20 @@ export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
 
         {/* Profile */}
         <div className="mt-2 flex flex-col items-center gap-1 text-center">
-          <div className="h-px w-8 bg-emerald-100" />
+          <div className="h-px w-8 bg-emerald-100 dark:bg-emerald-900" />
           <p className="text-[10px] font-medium text-emerald-700 truncate max-w-17.5">
-            {userName}
+            {displayName}
           </p>
         </div>
 
         {/* Help */}
-        <NavIcon icon={HelpCircle} label="Help" variant="sidebar" active={false} />
+        <NavIcon icon={HelpCircle} label={t("nav.help")} variant="sidebar" active={false} />
       </aside>
 
       {/* Mobile */}
       <div className="fixed bottom-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 px-3 md:hidden">
-        <nav className="flex justify-between rounded-3xl border border-emerald-100 bg-white/90 px-2 py-2 shadow-md">
-          {routes.map((r) => (
+        <nav className="flex justify-between rounded-3xl border border-emerald-100 bg-white/90 px-2 py-2 shadow-md transition-colors duration-300 dark:border-emerald-900/60 dark:bg-slate-950/90">
+          {mobileRoutes.map((r) => (
             <Link key={r.href} href={r.href}>
               <NavIcon
                 icon={r.icon}

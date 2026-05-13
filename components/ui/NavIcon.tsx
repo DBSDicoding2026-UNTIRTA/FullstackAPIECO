@@ -37,7 +37,7 @@ export function NavIcon({
         "outline-none transition-all duration-300 ease-out",
         "focus-visible:ring-2 focus-visible:ring-emerald-300/70 focus-visible:ring-offset-0",
         isBottom
-          ? ["h-14 w-14 rounded-2xl", "active:scale-95"]
+          ? ["h-11 w-11 rounded-2xl sm:h-12 sm:w-12", "active:scale-95"]
           : ["h-12 w-12 rounded-2xl", "hover:scale-105 active:scale-95"],
         className
       )}
@@ -52,12 +52,13 @@ export function NavIcon({
           "border backdrop-blur-xl",
           active
             ? [
-                "border-emerald-200 bg-linear-to-br from-emerald-100 to-lime-50 shadow-[0_8px_24px_rgba(16,185,129,0.16),inset_0_1px_0_rgba(255,255,255,0.8)]",
+                "border-emerald-200 bg-linear-to-br from-emerald-100 to-lime-50 shadow-[0_8px_24px_rgba(16,185,129,0.16),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-emerald-700 dark:from-emerald-950 dark:to-slate-900",
               ]
             : [
-                "border-emerald-100 bg-white/80 shadow-[0_6px_18px_rgba(16,185,129,0.08)]",
+                "border-emerald-100 bg-white/80 shadow-[0_6px_18px_rgba(16,185,129,0.08)] dark:border-emerald-900/60 dark:bg-slate-900/85",
                 "group-hover:bg-emerald-50",
                 "group-hover:border-emerald-200",
+                "dark:group-hover:bg-emerald-950/70",
               ]
         )}
       />
@@ -74,7 +75,9 @@ export function NavIcon({
       <span
         className={cn(
           "relative z-10 flex items-center justify-center transition-all duration-300",
-          active ? "scale-100 text-emerald-700" : "text-slate-500 group-hover:text-emerald-700"
+          active
+            ? "scale-100 text-emerald-700 dark:text-emerald-300"
+            : "text-slate-500 group-hover:text-emerald-700 dark:text-slate-400 dark:group-hover:text-emerald-300"
         )}
       >
         <Icon

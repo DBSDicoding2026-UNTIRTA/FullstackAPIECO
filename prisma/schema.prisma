@@ -18,22 +18,35 @@ enum Role {
 }
 
 model User {
-  id                  String                @id @default(cuid())
-  name                String?
-  email               String                @unique
-  emailVerified       DateTime?
-  image               String?
-  age                 Int?
-  password            String?
-  role                Role                  @default(USER)
-  points              Int                   @default(0)
-  level               Int                   @default(1)
-  accounts            Account[]
-  sessions            Session[]
-  quizAttempts        QuizAttempt[]
-  aiAnalysisHistories AIAnalysisHistory[]
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
+  id                            String              @id @default(cuid())
+  name                          String?
+  username                      String?             @unique
+  email                         String              @unique
+  emailVerified                 DateTime?
+  image                         String?
+  avatar                        String?
+  phone                         String?
+  bio                           String?
+  age                           Int?
+  password                      String?
+  role                          Role                @default(USER)
+  points                        Int                 @default(0)
+  level                         Int                 @default(1)
+  theme                         String              @default("system")
+  notificationsEnabled          Boolean             @default(true)
+  emailNotificationsEnabled     Boolean             @default(true)
+  pushNotificationsEnabled      Boolean             @default(false)
+  aiResultNotificationsEnabled  Boolean             @default(true)
+  marketingNotificationsEnabled Boolean             @default(false)
+  weeklyDigestEnabled           Boolean             @default(true)
+  language                      String              @default("id")
+  lastLoginAt                   DateTime?
+  accounts                      Account[]
+  sessions                      Session[]
+  quizAttempts                  QuizAttempt[]
+  aiAnalysisHistories           AIAnalysisHistory[]
+  createdAt                     DateTime            @default(now())
+  updatedAt                     DateTime            @updatedAt
 }
 
 model Account {
@@ -76,7 +89,7 @@ model VerificationToken {
 
 model QuizQuestion {
   id            String        @id @default(cuid())
-  moduleId      String?
+  moduleId      String
   question      String
   optionA       String
   optionB       String
@@ -84,7 +97,7 @@ model QuizQuestion {
   optionD       String
   correctAnswer String
   points        Int           @default(10)
-  module        QuizModule?   @relation(fields: [moduleId], references: [id], onDelete: SetNull)
+  module        QuizModule    @relation(fields: [moduleId], references: [id], onDelete: Restrict)
   attempts      QuizAttempt[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -99,23 +112,23 @@ model QuizModule {
   order       Int            @default(1)
   xpReward    Int            @default(0)
   isActive    Boolean        @default(true)
-  questions   QuizQuestion[]
+  quizzes     QuizQuestion[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }
 
 model QuizAttempt {
-  id             String       @id @default(cuid())
+  id             String   @id @default(cuid())
   userId         String
   questionId     String
   selectedAnswer String
   correctAnswer  String
   isCorrect      Boolean
-  pointsEarned   Int          @default(0)
-  createdAt      DateTime     @default(now())
+  pointsEarned   Int      @default(0)
+  createdAt      DateTime @default(now())
 
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  question        QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([questionId])

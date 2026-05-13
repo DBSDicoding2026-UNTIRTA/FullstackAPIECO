@@ -9,26 +9,26 @@ import {
 export const howItWorksSteps: HowItWorksStep[] = [
   {
     id: 1,
-    title: 'Upload Foto Sampah',
-    description: 'Ambil foto sampah yang ingin dipilah menggunakan kamera smartphone kamu.',
+    titleKey: 'landing.how.step1.title',
+    descriptionKey: 'landing.how.step1.description',
     icon: '📸',
   },
   {
     id: 2,
-    title: 'AI Mengklasifikasi',
-    description: 'Teknologi AI kami mengenali dan mengklasifikasi jenis sampah secara otomatis.',
+    titleKey: 'landing.how.step2.title',
+    descriptionKey: 'landing.how.step2.description',
     icon: '🤖',
   },
   {
     id: 3,
-    title: 'Dapatkan Poin',
-    description: 'Setiap pemilahan yang tepat memberikan poin reward untuk pencapaianmu.',
+    titleKey: 'landing.how.step3.title',
+    descriptionKey: 'landing.how.step3.description',
     icon: '⭐',
   },
   {
     id: 4,
-    title: 'Naik Peringkat',
-    description: 'Kumpulkan poin dan bersaing dengan pengguna lain di leaderboard global.',
+    titleKey: 'landing.how.step4.title',
+    descriptionKey: 'landing.how.step4.description',
     icon: '🏆',
   },
 ];
@@ -36,43 +36,43 @@ export const howItWorksSteps: HowItWorksStep[] = [
 export const features: Feature[] = [
   {
     id: 1,
-    title: 'Klasifikasi AI',
-    description: 'Teknologi machine learning yang akurat mengenali 5 kategori sampah secara instant.',
+    titleKey: 'landing.features.item1.title',
+    descriptionKey: 'landing.features.item1.description',
     icon: '🧠',
     color: 'from-emerald-400 to-teal-500',
   },
   {
     id: 2,
-    title: 'Sistem Poin',
-    description: 'Kumpulkan poin dari setiap pemilahan dan tukar dengan reward menarik.',
+    titleKey: 'landing.features.item2.title',
+    descriptionKey: 'landing.features.item2.description',
     icon: '💰',
     color: 'from-amber-400 to-orange-500',
   },
   {
     id: 3,
-    title: 'Badge & Challenge',
-    description: 'Unlock badge eksklusif dan selesaikan challenge harian untuk bonus poin.',
+    titleKey: 'landing.features.item3.title',
+    descriptionKey: 'landing.features.item3.description',
     icon: '🎖️',
     color: 'from-pink-400 to-rose-500',
   },
   {
     id: 4,
-    title: 'Leaderboard Global',
-    description: 'Bersaing dengan pengguna lain dan lihat peringkatmu di leaderboard dunia.',
+    titleKey: 'landing.features.item4.title',
+    descriptionKey: 'landing.features.item4.description',
     icon: '📊',
     color: 'from-blue-400 to-cyan-500',
   },
   {
     id: 5,
-    title: 'Statistik Lingkungan',
-    description: 'Lihat dampak positifmu terhadap lingkungan melalui dashboard personal.',
+    titleKey: 'landing.features.item5.title',
+    descriptionKey: 'landing.features.item5.description',
     icon: '🌍',
     color: 'from-green-400 to-lime-500',
   },
   {
     id: 6,
-    title: 'Riwayat Pemilahan',
-    description: 'Pantau semua aktivitas pemilahan sampahmu dalam satu tempat.',
+    titleKey: 'landing.features.item6.title',
+    descriptionKey: 'landing.features.item6.description',
     icon: '📝',
     color: 'from-purple-400 to-indigo-500',
   },
@@ -105,7 +105,7 @@ export const leaderboardUsers: LeaderboardUser[] = [
 export const impactStats: ImpactStat[] = [
   {
     id: 1,
-    label: 'Sampah Terklasifikasi',
+    labelKey: 'landing.stats.item1.label',
     value: 1200,
     suffix: '+',
     icon: '🗑️',
@@ -113,7 +113,7 @@ export const impactStats: ImpactStat[] = [
   },
   {
     id: 2,
-    label: 'Plastik Dipilah',
+    labelKey: 'landing.stats.item2.label',
     value: 850,
     suffix: '+',
     icon: '🍾',
@@ -121,7 +121,7 @@ export const impactStats: ImpactStat[] = [
   },
   {
     id: 3,
-    label: 'User Aktif',
+    labelKey: 'landing.stats.item3.label',
     value: 320,
     suffix: '+',
     icon: '👥',
@@ -129,7 +129,7 @@ export const impactStats: ImpactStat[] = [
   },
   {
     id: 4,
-    label: 'Kategori Sampah',
+    labelKey: 'landing.stats.item4.label',
     value: 5,
     suffix: '',
     icon: '📦',
@@ -181,7 +181,7 @@ export const floatingIcons: FloatingIconConfig[] = [
 ];
 
 export const LOGIN_BENEFITS = [
-  { id: 'benefit-1', text: 'AI membantu identifikasi sampah lebih cepat.' },
-  { id: 'benefit-2', text: 'Poin dan badge memotivasi kebiasaan positif.' },
-  { id: 'benefit-3', text: 'Dashboard progres mudah dipantau dari mobile.' },
+  { id: 'benefit-1', textKey: 'auth.login.highlight.ai' },
+  { id: 'benefit-2', textKey: 'auth.login.highlight.points' },
+  { id: 'benefit-3', textKey: 'dashboard.subtitle' },
 ] as const;

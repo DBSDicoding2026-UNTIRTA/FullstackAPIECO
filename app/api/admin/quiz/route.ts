@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { z } from "zod";
 
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/admin-api-auth";
 import prisma from "@/lib/prisma";
 
 const moduleSelect = {
@@ -22,27 +21,19 @@ const quizInputSchema = z.object({
   points: z.coerce.number().int().min(1, "Poin minimal 1."),
 });
 
-async function checkAdmin() {
-  const session = await getServerSession(authOptions);
+export async function GET(request: Request) {
+  const auth = await requireAdminApi();
+  if (auth.error) return auth.error;
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return null;
-  }
-
-  return session;
-}
-
-export async function GET() {
-  const session = await checkAdmin();
-
-  if (!session) {
-    return NextResponse.json(
-      { message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
+  const { searchParams } = new URL(request.url);
+  const moduleId = searchParams.get("moduleId")?.trim();
 
   const quizzes = await prisma.quizQuestion.findMany({
+    where: moduleId
+      ? {
+          moduleId,
+        }
+      : undefined,
     orderBy: {
       createdAt: "desc",
     },
@@ -68,14 +59,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await checkAdmin();
-
-  if (!session) {
-    return NextResponse.json(
-      { message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
+  const auth = await requireAdminApi();
+  if (auth.error) return auth.error;
 
   let body: unknown;
 

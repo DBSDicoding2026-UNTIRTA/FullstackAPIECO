@@ -41,7 +41,7 @@ export async function GET() {
       xpReward: true,
       _count: {
         select: {
-          questions: true,
+          quizzes: true,
         },
       },
     },
@@ -54,7 +54,7 @@ export async function GET() {
       description: moduleRecord.description,
       order: moduleRecord.order,
       xpReward: moduleRecord.xpReward,
-      questionCount: moduleRecord._count.questions,
+      questionCount: moduleRecord._count.quizzes,
     }))
   );
 }

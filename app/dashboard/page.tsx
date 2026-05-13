@@ -11,13 +11,9 @@ import UploadCard from "@/components/dashboard/UploadCard";
 import AppNavbar from "@/components/shared/AppNavbar";
 import Container from "@/components/shared/Container";
 import { authOptions } from "@/lib/auth";
-import {
-  DASHBOARD_STATS,
-  DASHBOARD_USER,
-  LEADERBOARD_MINI,
-  USER_BADGES,
-  WEEKLY_CHALLENGES,
-} from "@/data/dashboard";
+import { DASHBOARD_USER, getDashboardData } from "@/data/dashboard";
+import { getGlobalSettingsForSession } from "@/lib/settings/server";
+import { translate } from "@/lib/i18n/dictionaries";
 
 import AppShell from "@/components/shared/AppShell";
 
@@ -31,6 +27,11 @@ export default async function DashboardPage() {
   if (session.user?.role === "ADMIN") {
     redirect("/admin");
   }
+
+  const settings = await getGlobalSettingsForSession(session);
+  const t = (key: Parameters<typeof translate>[1], values?: Record<string, string | number>) =>
+    translate(settings.preferences.language, key, values);
+  const { stats, challenges, leaderboard, badges } = getDashboardData(t);
 
   // TODO: profile completion nanti.
   // TODO: update umur nanti.
@@ -55,7 +56,7 @@ export default async function DashboardPage() {
           <DashboardHeader user={dashboardUser} />
 
           <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {DASHBOARD_STATS.map((item, index) => (
+            {stats.map((item, index) => (
               <StatCard key={item.id} item={item} index={index} />
             ))}
           </section>
@@ -63,15 +64,17 @@ export default async function DashboardPage() {
           <section className="grid gap-4 xl:grid-cols-3">
             <div className="space-y-4 lg:col-span-2">
               <UploadCard />
-              <ChallengeProgress items={WEEKLY_CHALLENGES} />
+              <ChallengeProgress items={challenges} />
             </div>
-            <LeaderboardMini entries={LEADERBOARD_MINI} />
+            <LeaderboardMini entries={leaderboard} />
           </section>
 
-          <section className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-[0_14px_34px_-24px_rgba(16,185,129,0.45)] sm:p-6">
-            <h2 className="text-lg font-semibold text-slate-900">Badge Saya</h2>
+          <section className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-[0_14px_34px_-24px_rgba(16,185,129,0.45)] sm:p-6 dark:border-emerald-900/60 dark:bg-slate-900">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+              {t("dashboard.badgesTitle")}
+            </h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {USER_BADGES.map((badge, index) => (
+              {badges.map((badge, index) => (
                 <BadgeCard key={badge.id} badge={badge} index={index} />
               ))}
             </div>

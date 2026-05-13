@@ -5,8 +5,8 @@ import { useState } from "react";
 import { CheckCircle2, Edit3, Loader2, Save, Trash2, X } from "lucide-react";
 
 import type { AdminQuizAnswer, AdminQuizModule, AdminQuizRecord } from "./types";
-
-const refreshEventName = "admin-quiz:changed";
+import { quizChangedEventName } from "./events";
+import ModuleCombobox from "./ModuleCombobox";
 
 const answerOptions: AdminQuizAnswer[] = ["A", "B", "C", "D"];
 
@@ -22,7 +22,7 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [moduleId, setModuleId] = useState(quiz.moduleId ?? "");
+  const [moduleId, setModuleId] = useState(quiz.moduleId);
   const [question, setQuestion] = useState(quiz.question);
   const [optionA, setOptionA] = useState(quiz.optionA);
   const [optionB, setOptionB] = useState(quiz.optionB);
@@ -34,7 +34,7 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
   function handleStartEdit() {
     setError(null);
     setEditing(true);
-    setModuleId(quiz.moduleId ?? "");
+    setModuleId(quiz.moduleId);
     setQuestion(quiz.question);
     setOptionA(quiz.optionA);
     setOptionB(quiz.optionB);
@@ -47,7 +47,7 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
   function handleCancelEdit() {
     setEditing(false);
     setError(null);
-    setModuleId(quiz.moduleId ?? "");
+    setModuleId(quiz.moduleId);
     setQuestion(quiz.question);
     setOptionA(quiz.optionA);
     setOptionB(quiz.optionB);
@@ -79,7 +79,7 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
         return;
       }
 
-      window.dispatchEvent(new Event(refreshEventName));
+      window.dispatchEvent(new Event(quizChangedEventName));
       router.refresh();
     } catch {
       setError("Terjadi gangguan saat menghapus quiz.");
@@ -125,7 +125,7 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
       }
 
       setEditing(false);
-      window.dispatchEvent(new Event(refreshEventName));
+      window.dispatchEvent(new Event(quizChangedEventName));
       router.refresh();
     } catch {
       setError("Terjadi gangguan saat menyimpan quiz.");
@@ -150,14 +150,13 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
               Level {index + 1}
             </span>
             <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-700">
-              {quiz.module?.title ?? "Tanpa modul"}
+              {quiz.module.title}
             </span>
           </div>
 
           <h3 className="mt-3 font-bold text-slate-900">{quiz.question}</h3>
           <p className="mt-2 text-xs text-slate-500">
-            {quiz.module?.title ?? "Tanpa modul"}
-            {quiz.module ? ` • Urutan ${quiz.module.order}` : ""}
+            {quiz.module.title} - Urutan {quiz.module.order}
           </p>
         </div>
 
@@ -172,18 +171,17 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
             <label className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
               Modul
             </label>
-            <select
+            <ModuleCombobox
+              modules={modules}
               value={moduleId}
-              onChange={(event) => setModuleId(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-emerald-100 bg-white p-3 text-sm outline-none focus:border-emerald-500"
-            >
-              <option value="">Pilih modul</option>
-              {modules.map((module) => (
-                <option key={module.id} value={module.id}>
-                  {module.title}
-                </option>
-              ))}
-            </select>
+              onValueChange={setModuleId}
+              disabled={modules.length === 0}
+              placeholder="Pilih modul"
+              searchPlaceholder="Cari modul..."
+              emptyText="Modul tidak ditemukan."
+              loadingText="Memuat modul..."
+              className="mt-2"
+            />
           </div>
 
           <div>

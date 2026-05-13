@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const DEFAULT_AI_MODEL_URL = "https://kazone-pilahyuk.hf.space/predict";
+const DEFAULT_AI_MODEL_URL =
+  "https://hugpy-klasifikasi-sampah-risol-matcha.hf.space/";
 const AI_MODEL_TIMEOUT_MS = 60_000;
 
 interface FastAPIResponse {

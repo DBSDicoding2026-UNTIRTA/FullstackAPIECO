@@ -4,10 +4,12 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { features } from '@/data/landing';
+import { useSettings } from '@/hooks/use-settings';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function FeaturesSection() {
+  const { t } = useSettings();
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -60,16 +62,16 @@ export default function FeaturesSection() {
     <section
       ref={sectionRef}
       id="features"
-      className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-emerald-50/30"
+      className="bg-gradient-to-b from-white to-emerald-50/30 px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:from-slate-950 dark:to-slate-900"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Fitur Unggulan
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
+            {t('landing.features.title')}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Platform lengkap dengan teknologi terdepan untuk pengalaman pemilahan sampah yang maksimal.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600 dark:text-slate-300">
+            {t('landing.features.subtitle')}
           </p>
         </div>
 
@@ -82,7 +84,7 @@ export default function FeaturesSection() {
             <div
               key={feature.id}
               data-feature={feature.id}
-              className="group relative p-6 md:p-8 rounded-2xl bg-white border border-gray-100 hover:border-emerald-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+              className="group relative cursor-pointer rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-emerald-200 hover:shadow-xl md:p-8 dark:border-slate-800 dark:bg-slate-900"
             >
               {/* Background gradient on hover */}
               <div
@@ -93,10 +95,12 @@ export default function FeaturesSection() {
               <div className="text-5xl mb-4 inline-block">{feature.icon}</div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors">
-                {feature.title}
+              <h3 className="mb-3 text-xl font-bold text-gray-900 transition-colors group-hover:text-emerald-600 dark:text-white">
+                {t(feature.titleKey)}
               </h3>
-              <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+              <p className="leading-relaxed text-gray-600 dark:text-slate-300">
+                {t(feature.descriptionKey)}
+              </p>
 
               {/* Bottom accent */}
               <div

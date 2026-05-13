@@ -4,10 +4,12 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { howItWorksSteps } from '@/data/landing';
+import { useSettings } from '@/hooks/use-settings';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function HowItWorksSection() {
+  const { t } = useSettings();
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -41,16 +43,16 @@ export default function HowItWorksSection() {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-white"
+      className="bg-white px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:bg-slate-950"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Cara Kerja Pilah Yuk!!
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
+            {t('landing.how.title')}
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            Empat langkah mudah untuk mulai memilah sampah dan menyelamatkan lingkungan.
+          <p className="mx-auto mt-4 max-w-2xl text-base text-gray-600 sm:text-lg dark:text-slate-300">
+            {t('landing.how.subtitle')}
           </p>
         </div>
 
@@ -78,8 +80,12 @@ export default function HowItWorksSection() {
               <div className="text-6xl mb-4">{step.icon}</div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
-              <p className="text-gray-600 leading-relaxed text-sm">{step.description}</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                {t(step.titleKey)}
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-600 dark:text-slate-300">
+                {t(step.descriptionKey)}
+              </p>
             </div>
           ))}
         </div>

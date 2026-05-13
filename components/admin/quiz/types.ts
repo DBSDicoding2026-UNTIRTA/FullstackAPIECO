@@ -8,11 +8,13 @@ export type AdminQuizModule = {
   xpReward: number;
   isActive: boolean;
   questionCount: number;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type AdminQuizRecord = {
   id: string;
-  moduleId: string | null;
+  moduleId: string;
   question: string;
   optionA: string;
   optionB: string;
@@ -26,5 +28,5 @@ export type AdminQuizRecord = {
     id: string;
     title: string;
     order: number;
-  } | null;
+  };
 };

@@ -5,10 +5,12 @@ import React, { JSX, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { teamData } from '@/data/team';
+import { useSettings } from '@/hooks/use-settings';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function TeamSection(): JSX.Element {
+  const { t } = useSettings();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
@@ -76,7 +78,7 @@ export default function TeamSection(): JSX.Element {
 
   const renderCardElement = (member: (typeof teamData)[number]) => (
     <article
-      className="team-card min-w-[220px] flex-shrink-0 bg-white border border-emerald-100 rounded-2xl shadow-sm p-6 flex flex-col items-center text-center group hover:-translate-y-1 transition-transform duration-200 ease-out hover:shadow-md hover:border-emerald-200"
+      className="team-card min-w-[220px] flex-shrink-0 rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-sm transition-transform duration-200 ease-out hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md dark:border-emerald-900/60 dark:bg-slate-900"
       aria-label={member.name}
     >
       <div className="w-24 h-24 mb-4 flex items-center justify-center">
@@ -100,18 +102,22 @@ export default function TeamSection(): JSX.Element {
         </div>
       </div>
 
-      <h3 className="text-base font-medium text-emerald-900">{member.name}</h3>
-      <p className="mt-1 text-sm text-emerald-600">{member.role}</p>
+      <h3 className="text-base font-medium text-emerald-900 dark:text-emerald-100">{member.name}</h3>
+      <p className="mt-1 text-sm text-emerald-600 dark:text-emerald-300">{member.role}</p>
     </article>
   );
 
   return (
-    <section className="bg-white">
+    <section className="bg-white dark:bg-slate-950">
       <div className="max-w-7xl mx-auto py-16 px-6 sm:px-8 lg:px-12">
-        <div className="bg-gradient-to-b from-emerald-50 to-white rounded-3xl p-8">
+        <div className="rounded-3xl bg-gradient-to-b from-emerald-50 to-white p-8 dark:from-emerald-950/40 dark:to-slate-950">
           <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-emerald-900">Tim Pilah Yuk!!</h2>
-            <p className="mt-2 text-sm text-emerald-700">Orang-orang di balik pengembangan aplikasi klasifikasi sampah berbasis AI.</p>
+            <h2 className="text-2xl font-semibold text-emerald-900 sm:text-3xl dark:text-emerald-100">
+              {t('landing.team.title')}
+            </h2>
+            <p className="mt-2 text-sm text-emerald-700 dark:text-emerald-300">
+              {t('landing.team.subtitle')}
+            </p>
           </div>
 
           <div

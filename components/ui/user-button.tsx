@@ -14,9 +14,11 @@ import {
 import { Loader2, LogOut, User, UserCircle, Info, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useSettings } from "@/hooks/use-settings";
 
 export function UserButton() {
   const { data: session, status } = useSession();
+  const { profile, t } = useSettings();
   const router = useRouter();
 
   const handleAboutClick = () => {
@@ -61,17 +63,17 @@ export function UserButton() {
           <span className="relative">
             <Avatar className="h-9 w-9 border border-emerald-100 bg-emerald-50">
               <AvatarImage
-                src={session.user?.image || ""}
-                alt={session.user?.name || ""}
+                src={profile.avatar || session.user?.image || ""}
+                alt={profile.name || session.user?.name || ""}
               />
               <AvatarFallback className="bg-emerald-100 font-medium text-emerald-700">
-                {session.user?.name?.[0]}
+                {(profile.name || session.user?.name || "P")?.[0]}
               </AvatarFallback>
             </Avatar>
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
           </span>
           <span className="max-w-[9rem] truncate text-sm font-medium text-slate-700">
-            {session.user?.name?.split(" ")[0]}
+            {(profile.name || session.user?.name)?.split(" ")[0]}
           </span>
           <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
         </Button>
@@ -85,10 +87,10 @@ export function UserButton() {
         <DropdownMenuLabel className="font-normal p-3">
           <div className="flex flex-col space-y-2">
             <p className="text-sm font-semibold leading-none text-slate-800">
-              {session.user?.name}
+              {profile.name || session.user?.name}
             </p>
             <p className="truncate text-xs leading-none text-slate-500">
-              {session.user?.email}
+              {profile.email || session.user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -98,7 +100,7 @@ export function UserButton() {
           className="flex cursor-pointer items-center rounded-md p-3 text-sm text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
         >
           <User className="mr-2 h-4 w-4 text-emerald-600" />
-          Profile
+          {t("settings.profile")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleAboutClick}
@@ -112,7 +114,7 @@ export function UserButton() {
           className="flex cursor-pointer items-center rounded-md p-3 text-sm text-slate-700 transition-colors hover:bg-rose-50 hover:text-rose-600"
         >
           <LogOut className="mr-2 h-4 w-4 text-rose-500" />
-          Log out
+          {t("common.logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

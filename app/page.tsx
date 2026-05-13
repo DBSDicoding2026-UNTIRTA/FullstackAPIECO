@@ -11,6 +11,8 @@ import Footer from '@/components/landing/Footer';
 import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/lib/auth';
+import { getGlobalSettingsForSession } from '@/lib/settings/server';
+import { translate } from '@/lib/i18n/dictionaries';
 
 export const metadata = {
   title: 'Pilah Yuk!! - Platform Gamifikasi Daur Ulang dengan AI',
@@ -28,12 +30,15 @@ export const metadata = {
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
+  const settings = await getGlobalSettingsForSession(session);
+  const t = (key: Parameters<typeof translate>[1], values?: Record<string, string | number>) =>
+    translate(settings.preferences.language, key, values);
 
-  const ctaLabel = session ? 'Dashboard' : 'Login';
+  const ctaLabel = session ? t('nav.dashboard') : t('common.login');
   const ctaHref = session ? (session.user?.role === 'ADMIN' ? '/admin' : '/dashboard') : '/login';
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white dark:bg-slate-950">
       <Navbar ctaLabel={ctaLabel} ctaHref={ctaHref} />
       <HeroSection />
       <HowItWorksSection />

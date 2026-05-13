@@ -3,26 +3,28 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { Leaf, Recycle, Sparkles, Trophy } from "lucide-react";
+import { useSettings } from "@/hooks/use-settings";
 
 const HIGHLIGHTS = [
   {
     id: "ai",
     icon: Sparkles,
-    text: "AI klasifikasi sampah",
+    textKey: "auth.register.highlight.ai",
   },
   {
     id: "points",
     icon: Trophy,
-    text: "Sistem poin",
+    textKey: "auth.register.highlight.points",
   },
   {
     id: "badge-leaderboard",
     icon: Recycle,
-    text: "Badge & leaderboard",
+    textKey: "auth.register.highlight.badge",
   },
 ] as const;
 
 export default function RegisterHeroText() {
+  const { t } = useSettings();
   const heroRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -48,16 +50,15 @@ export default function RegisterHeroText() {
         className="inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-950/35 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-emerald-100 sm:text-xs"
       >
         <Leaf className="h-3.5 w-3.5" aria-hidden="true" />
-        Mulai aksi hijau pertamamu
+        {t("auth.register.heroTag")}
       </p>
 
       <h1 data-hero-item className="mt-4 max-w-xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
-        Daftar dan Jadikan Sampah Lebih Bernilai
+        {t("auth.register.heroTitle")}
       </h1>
 
       <p data-hero-item className="mt-4 max-w-xl text-sm leading-relaxed text-emerald-50/85 sm:text-base">
-        Dengan Pilah Yuk!!, setiap sampah yang kamu pilah bisa menjadi poin, badge, dan kontribusi nyata untuk
-        lingkungan.
+        {t("auth.register.heroSubtitle")}
       </p>
 
       <ul data-hero-item className="mt-6 grid max-w-xl gap-3 sm:grid-cols-2 lg:grid-cols-1">
@@ -72,7 +73,9 @@ export default function RegisterHeroText() {
               <span className="inline-flex rounded-lg bg-emerald-300/15 p-2 text-emerald-100">
                 <Icon className="h-4 w-4" aria-hidden="true" />
               </span>
-              <span className="text-sm text-emerald-50/90">{highlight.text}</span>
+              <span className="text-sm text-emerald-50/90">
+                {t(highlight.textKey)}
+              </span>
             </li>
           );
         })}

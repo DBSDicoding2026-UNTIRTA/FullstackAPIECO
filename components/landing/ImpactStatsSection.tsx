@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { impactStats } from '@/data/landing';
+import { useSettings } from '@/hooks/use-settings';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -42,22 +43,23 @@ const CountUp = ({ target, triggerRef }: CountUpProps) => {
 };
 
 export default function ImpactStatsSection() {
+  const { t } = useSettings();
   const sectionRef = useRef<HTMLDivElement>(null);
 
   return (
     <section
       ref={sectionRef}
       id="stats"
-      className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-purple-50/30"
+      className="bg-gradient-to-b from-white to-purple-50/30 px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:from-slate-950 dark:to-slate-900"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Dampak Nyata Pilah Yuk!!
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
+            {t('landing.stats.title')}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan pengguna yang sudah membantu menjaga lingkungan.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600 dark:text-slate-300">
+            {t('landing.stats.subtitle')}
           </p>
         </div>
 
@@ -66,7 +68,7 @@ export default function ImpactStatsSection() {
           {impactStats.map((stat) => (
             <div
               key={stat.id}
-              className={`relative p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group cursor-pointer`}
+              className="group relative cursor-pointer rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
             >
               {/* Background gradient */}
               <div
@@ -82,9 +84,13 @@ export default function ImpactStatsSection() {
                   <span className={`text-4xl sm:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
                     <CountUp target={stat.value} triggerRef={sectionRef} />
                   </span>
-                  <span className="text-2xl font-bold text-gray-600 ml-1">{stat.suffix}</span>
+                  <span className="ml-1 text-2xl font-bold text-gray-600 dark:text-slate-300">
+                    {stat.suffix}
+                  </span>
                 </div>
-                <p className="text-gray-600 font-medium">{stat.label}</p>
+                <p className="font-medium text-gray-600 dark:text-slate-300">
+                  {t(stat.labelKey)}
+                </p>
               </div>
 
               {/* Bottom accent */}
@@ -95,12 +101,14 @@ export default function ImpactStatsSection() {
 
         {/* Bottom message */}
         <div className="mt-16 text-center">
-          <p className="text-lg text-gray-600 mb-6">
-            Mari bersama-sama ciptakan dampak positif untuk lingkungan
+          <p className="mb-6 text-lg text-gray-600 dark:text-slate-300">
+            {t('landing.stats.footerMessage')}
           </p>
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-emerald-50 border border-emerald-200 rounded-full">
+          <div className="inline-flex items-center gap-3 rounded-full border border-emerald-200 bg-emerald-50 px-6 py-3 dark:border-emerald-800 dark:bg-emerald-950/40">
             <span className="text-2xl">♻️</span>
-            <p className="text-sm font-semibold text-emerald-700">Bergabunglah dengan komunitas kami sekarang</p>
+            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-200">
+              {t('landing.stats.joinCommunity')}
+            </p>
           </div>
         </div>
       </div>

@@ -4,10 +4,12 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { leaderboardUsers } from '@/data/landing';
+import { useSettings } from '@/hooks/use-settings';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function LeaderboardPreview() {
+  const { t } = useSettings();
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -37,33 +39,38 @@ export default function LeaderboardPreview() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-white">
+    <section
+      ref={sectionRef}
+      className="bg-white px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:bg-slate-950"
+    >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Top Performers
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
+            {t('landing.leaderboard.title')}
           </h2>
-          <p className="text-lg text-gray-600">
-            Siapa saja yang memilah sampah terbanyak bulan ini?
+          <p className="text-lg text-gray-600 dark:text-slate-300">
+            {t('landing.leaderboard.subtitle')}
           </p>
         </div>
 
         {/* Leaderboard Card */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
           {/* Header */}
           <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 md:px-8 py-6">
-            <h3 className="text-xl font-bold text-white">Leaderboard Global</h3>
-            <p className="text-emerald-100 text-sm mt-1">Ranking pemilah sampah terbaik bulan ini</p>
+            <h3 className="text-xl font-bold text-white">{t('landing.leaderboard.cardTitle')}</h3>
+            <p className="mt-1 text-sm text-emerald-100">
+              {t('landing.leaderboard.cardSubtitle')}
+            </p>
           </div>
 
           {/* Leaderboard table */}
-          <div ref={containerRef} className="divide-y divide-gray-200">
+          <div ref={containerRef} className="divide-y divide-gray-200 dark:divide-slate-800">
             {leaderboardUsers.map((user) => (
               <div
                 key={user.id}
                 data-rank={user.rank}
-                className="px-6 md:px-8 py-4 hover:bg-emerald-50/50 transition-colors duration-200"
+                className="px-6 py-4 transition-colors duration-200 hover:bg-emerald-50/50 md:px-8 dark:hover:bg-emerald-950/20"
               >
                 <div className="flex items-center justify-between gap-4">
                   {/* Rank and info */}
@@ -92,9 +99,13 @@ export default function LeaderboardPreview() {
                         {user.avatar}
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">
-                          {user.rank === 1 ? 'Top Performer' : user.rank === 2 ? 'Rising Star' : 'Great Player'}
+                        <p className="font-semibold text-gray-900 dark:text-white">{user.name}</p>
+                        <p className="text-sm text-gray-500 dark:text-slate-400">
+                          {user.rank === 1
+                            ? t('landing.leaderboard.rank.top')
+                            : user.rank === 2
+                              ? t('landing.leaderboard.rank.rising')
+                              : t('landing.leaderboard.rank.great')}
                         </p>
                       </div>
                     </div>
@@ -103,12 +114,14 @@ export default function LeaderboardPreview() {
                   {/* Points */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-lg font-bold text-emerald-600">{user.points}</span>
-                    <span className="text-sm text-gray-500">pts</span>
+                    <span className="text-sm text-gray-500 dark:text-slate-400">
+                      {t('landing.leaderboard.pointsUnit')}
+                    </span>
                   </div>
                 </div>
 
                 {/* Progress bar */}
-                <div className="mt-3 ml-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div className="mt-3 ml-16 h-1.5 rounded-full bg-gray-200 overflow-hidden dark:bg-slate-800">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"
                     style={{ width: `${(user.points / 3250) * 100}%` }}
@@ -119,21 +132,23 @@ export default function LeaderboardPreview() {
           </div>
 
           {/* Footer */}
-          <div className="bg-gray-50 px-6 md:px-8 py-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              Lihat lebih banyak pengguna di leaderboard lengkap
+          <div className="flex items-center justify-between bg-gray-50 px-6 py-4 md:px-8 dark:bg-slate-900">
+            <p className="text-sm text-gray-600 dark:text-slate-300">
+              {t('landing.leaderboard.footerText')}
             </p>
-            <button className="text-emerald-600 hover:text-emerald-700 font-semibold text-sm transition-colors">
-              Lihat Semua →
+            <button className="text-sm font-semibold text-emerald-600 transition-colors hover:text-emerald-700">
+              {t('landing.leaderboard.footerCta')}
             </button>
           </div>
         </div>
 
         {/* Fun fact */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-emerald-50 border border-emerald-200 rounded-full">
+          <div className="inline-flex items-center gap-3 rounded-full border border-emerald-200 bg-emerald-50 px-6 py-3 dark:border-emerald-800 dark:bg-emerald-950/40">
             <span className="text-2xl">🎯</span>
-            <p className="text-sm font-semibold text-emerald-700">Setiap pemilahan yang tepat naik 5 peringkat di leaderboard!</p>
+            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-200">
+              {t('landing.leaderboard.funFact')}
+            </p>
           </div>
         </div>
       </div>

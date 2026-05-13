@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { z } from "zod";
 
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/admin-api-auth";
 import { prisma } from "@/lib/prisma";
 
 const moduleSelect = {
@@ -30,28 +29,12 @@ const quizUpdateSchema = z
     }
   );
 
-async function checkAdmin() {
-  const session = await getServerSession(authOptions);
-
-  if (!session || session.user?.role !== "ADMIN") {
-    return null;
-  }
-
-  return session;
-}
-
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await checkAdmin();
-
-  if (!session) {
-    return NextResponse.json(
-      { message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
+  const auth = await requireAdminApi();
+  if (auth.error) return auth.error;
 
   const { id } = await params;
 
@@ -87,11 +70,8 @@ export async function PATCH(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
-  const session = await checkAdmin();
-
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAdminApi();
+  if (auth.error) return auth.error;
 
   const { id } = await context.params;
 

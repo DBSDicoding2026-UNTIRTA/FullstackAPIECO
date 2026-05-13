@@ -42,12 +42,19 @@ export async function POST(request: Request) {
 
     const hashedPassword = await bcrypt.hash(parsedPayload.data.password, 10);
 
+    const ADMIN_EMAIL = "memoriesendx@gmail.com";
+    const role =
+      parsedPayload.data.email.toLowerCase() === ADMIN_EMAIL
+        ? "ADMIN"
+        : "USER";
+
     await prisma.user.create({
       data: {
         name: parsedPayload.data.name,
         email: parsedPayload.data.email,
         age: parsedPayload.data.age ?? null,
         password: hashedPassword,
+        role,
       },
     });
 

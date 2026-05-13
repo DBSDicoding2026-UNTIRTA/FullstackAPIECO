@@ -1,4 +1,5 @@
 import { CheckCircle2, XCircle } from "lucide-react";
+import { useSettings } from "@/hooks/use-settings";
 
 type QuizResultPanelProps = {
   isCorrect: boolean;
@@ -11,12 +12,13 @@ export default function QuizResultPanel({
   correctAnswer,
   pointsEarned,
 }: QuizResultPanelProps) {
+  const { t } = useSettings();
   return (
     <div
       className={`rounded-[1.5rem] border p-5 ${
         isCorrect
-          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-          : "border-rose-200 bg-rose-50 text-rose-800"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200"
+          : "border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-200"
       }`}
     >
       <div className="flex items-center gap-3">
@@ -28,10 +30,12 @@ export default function QuizResultPanel({
 
         <div>
           <h3 className="text-lg font-black">
-            {isCorrect ? `Benar! +${pointsEarned} XP` : "Salah"}
+            {isCorrect
+              ? t("quiz.result.correct", { points: pointsEarned })
+              : t("quiz.result.wrong")}
           </h3>
           <p className="text-sm font-semibold">
-            Jawaban benar: {correctAnswer}
+            {t("quiz.result.correctAnswer", { answer: correctAnswer })}
           </p>
         </div>
       </div>

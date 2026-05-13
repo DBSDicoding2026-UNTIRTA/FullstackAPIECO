@@ -2,8 +2,10 @@
 
 import { useRef, useState } from "react";
 import { signIn } from "next-auth/react";
+import { useSettings } from "@/hooks/use-settings";
 
 export default function GoogleLoginButton() {
+  const { t } = useSettings();
   const [isLoading, setIsLoading] = useState(false);
   const inFlightRef = useRef(false);
 
@@ -30,7 +32,7 @@ export default function GoogleLoginButton() {
       disabled={isLoading}
       aria-busy={isLoading}
       className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 transition hover:border-emerald-300 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-70"
-      aria-label="Lanjutkan dengan Google"
+      aria-label={t("auth.googleContinue")}
     >
       <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
         <path
@@ -50,7 +52,7 @@ export default function GoogleLoginButton() {
           fill="#EA4335"
         />
       </svg>
-      {isLoading ? "Memproses..." : "Lanjutkan dengan Google"}
+      {isLoading ? t("common.processing") : t("auth.googleContinue")}
     </button>
   );
 }

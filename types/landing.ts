@@ -1,14 +1,16 @@
+import type { TranslationKey } from "@/lib/i18n/dictionaries";
+
 export interface HowItWorksStep {
   id: number;
-  title: string;
-  description: string;
+  titleKey: TranslationKey;
+  descriptionKey: TranslationKey;
   icon: string;
 }
 
 export interface Feature {
   id: number;
-  title: string;
-  description: string;
+  titleKey: TranslationKey;
+  descriptionKey: TranslationKey;
   icon: string;
   color: string;
 }
@@ -23,7 +25,7 @@ export interface LeaderboardUser {
 
 export interface ImpactStat {
   id: number;
-  label: string;
+  labelKey: TranslationKey;
   value: number;
   suffix: string;
   icon: string;

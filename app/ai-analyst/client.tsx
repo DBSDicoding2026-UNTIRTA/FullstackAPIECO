@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useAppNotifications } from "@/hooks/use-app-notifications";
+import { useSettings } from "@/hooks/use-settings";
+
 type WasteLabel = "plastik" | "kertas" | "kaca" | "logam" | "organik";
 
 interface AIAnalysisHistoryItem {
@@ -32,61 +35,6 @@ interface AIAnalysisState {
   confidence: number;
 }
 
-const WASTE_LABELS: Record<WasteLabel, string> = {
-  plastik: "Plastik",
-  kertas: "Kertas",
-  kaca: "Kaca",
-  logam: "Logam",
-  organik: "Organik",
-};
-
-const WASTE_GUIDES: Record<WasteLabel, { uses: string[]; summary: string }> = {
-  plastik: {
-    uses: [
-      "Dapat didaur ulang menjadi botol baru",
-      "Bisa dijadikan kerajinan ramah lingkungan",
-      "Cocok dijadikan ecobrick untuk proyek hijau",
-    ],
-    summary:
-      "Plastik yang bersih punya nilai guna tinggi jika dipilah dan dikirim ke proses daur ulang.",
-  },
-  kertas: {
-    uses: [
-      "Dapat menjadi kertas daur ulang",
-      "Bisa diolah menjadi kompos kertas",
-      "Cocok untuk kerajinan dan produk kreatif",
-    ],
-    summary:
-      "Kertas yang kering dan bersih mudah masuk ke rantai daur ulang berikutnya.",
-  },
-  kaca: {
-    uses: [
-      "Dapat dilebur ulang menjadi kaca baru",
-      "Bisa dibuat botol baru atau wadah dekoratif",
-      "Mendukung material bangunan dan dekorasi",
-    ],
-    summary:
-      "Kaca dapat diproses ulang berulang kali jika dipilah secara aman dan tidak tercampur bahan lain.",
-  },
-  logam: {
-    uses: [
-      "Dapat dilebur ulang menjadi material baru",
-      "Bisa dimanfaatkan sebagai kaleng daur ulang",
-      "Berpotensi bernilai ekonomi di bank sampah",
-    ],
-    summary:
-      "Logam biasanya punya nilai ekonomi dan sangat layak dikembalikan ke rantai daur ulang.",
-  },
-  organik: {
-    uses: [
-      "Dapat diolah menjadi kompos",
-      "Bisa menjadi pupuk cair untuk tanaman",
-      "Cocok sebagai pakan maggot untuk budidaya",
-    ],
-    summary:
-      "Sampah organik paling bermanfaat jika dipisahkan sejak awal agar cepat terurai.",
-  },
-};
 
 function normalizeWasteLabel(value: string): WasteLabel {
   const normalized = value.trim().toLowerCase();
@@ -98,17 +46,25 @@ function normalizeWasteLabel(value: string): WasteLabel {
   return "organik";
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
-}
-
 export default function AIAnalystClient() {
+  const { notify } = useAppNotifications();
+  const { settings, t } = useSettings();
+  const locale = settings.preferences.language === "en" ? "en-US" : "id-ID";
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    [locale]
+  );
+  const formatDate = useCallback(
+    (value: string) => dateFormatter.format(new Date(value)),
+    [dateFormatter]
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -125,13 +81,70 @@ export default function AIAnalystClient() {
   const [history, setHistory] = useState<AIAnalysisHistoryItem[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
+  const wasteLabels = useMemo(
+    () => ({
+      plastik: t("waste.plastic"),
+      kertas: t("waste.paper"),
+      kaca: t("waste.glass"),
+      logam: t("waste.metal"),
+      organik: t("waste.organic"),
+    }),
+    [t]
+  );
+
+  const wasteGuides = useMemo(
+    () => ({
+      plastik: {
+        uses: [
+          t("ai.guide.plastic.use1"),
+          t("ai.guide.plastic.use2"),
+          t("ai.guide.plastic.use3"),
+        ],
+        summary: t("ai.guide.plastic.summary"),
+      },
+      kertas: {
+        uses: [
+          t("ai.guide.paper.use1"),
+          t("ai.guide.paper.use2"),
+          t("ai.guide.paper.use3"),
+        ],
+        summary: t("ai.guide.paper.summary"),
+      },
+      kaca: {
+        uses: [
+          t("ai.guide.glass.use1"),
+          t("ai.guide.glass.use2"),
+          t("ai.guide.glass.use3"),
+        ],
+        summary: t("ai.guide.glass.summary"),
+      },
+      logam: {
+        uses: [
+          t("ai.guide.metal.use1"),
+          t("ai.guide.metal.use2"),
+          t("ai.guide.metal.use3"),
+        ],
+        summary: t("ai.guide.metal.summary"),
+      },
+      organik: {
+        uses: [
+          t("ai.guide.organic.use1"),
+          t("ai.guide.organic.use2"),
+          t("ai.guide.organic.use3"),
+        ],
+        summary: t("ai.guide.organic.summary"),
+      },
+    }),
+    [t]
+  );
+
   const selectedGuide = useMemo(() => {
     if (!result) {
       return null;
     }
 
-    return WASTE_GUIDES[result.label];
-  }, [result]);
+    return wasteGuides[result.label];
+  }, [result, wasteGuides]);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -157,7 +170,7 @@ export default function AIAnalystClient() {
       };
 
       if (!response.ok) {
-        throw new Error(payload.error || "Gagal memuat history");
+        throw new Error(payload.error || t("ai.error.historyLoad"));
       }
 
       setHistory(payload.data ?? []);
@@ -209,12 +222,12 @@ export default function AIAnalystClient() {
   const handleFileSelect = useCallback(
     (file: File) => {
       if (!file.type.startsWith("image/")) {
-        setError("File harus berupa gambar.");
+        setError(t("ai.error.fileNotImage"));
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        setError("Ukuran gambar maksimal 5MB.");
+        setError(t("ai.error.fileTooLarge"));
         return;
       }
 
@@ -250,7 +263,7 @@ export default function AIAnalystClient() {
       setCameraError(
         cameraAccessError instanceof Error
           ? cameraAccessError.message
-          : "Tidak bisa mengakses kamera. Gunakan upload foto sebagai alternatif."
+          : t("ai.error.cameraAccess")
       );
     }
   }, []);
@@ -266,7 +279,7 @@ export default function AIAnalystClient() {
     const context = canvas.getContext("2d");
 
     if (!context) {
-      setCameraError("Kamera belum siap untuk mengambil foto.");
+      setCameraError(t("ai.error.cameraNotReady"));
       return;
     }
 
@@ -276,7 +289,7 @@ export default function AIAnalystClient() {
 
     canvas.toBlob((blob) => {
       if (!blob) {
-        setCameraError("Gagal mengambil foto dari kamera.");
+        setCameraError(t("ai.error.cameraCaptureFailed"));
         return;
       }
 
@@ -290,7 +303,7 @@ export default function AIAnalystClient() {
 
   const handleAnalyze = useCallback(async () => {
     if (!selectedFile) {
-      setError("Unggah atau ambil foto terlebih dahulu.");
+      setError(t("ai.error.noPhoto"));
       return;
     }
 
@@ -316,7 +329,7 @@ export default function AIAnalystClient() {
       if (!response.ok) {
         throw new Error(
           payload.error ||
-            "Gagal menganalisis gambar. Pastikan service FastAPI berjalan."
+            t("ai.error.analyzeFailed")
         );
       }
 
@@ -326,18 +339,19 @@ export default function AIAnalystClient() {
         label: normalizeWasteLabel(labelSource || "organik"),
         confidence: payload.confidence ?? 0,
       });
+      notify(t("ai.label.analysisSuccess"));
 
       await loadHistory();
     } catch (analyzeError) {
       setError(
         analyzeError instanceof Error
           ? analyzeError.message
-          : "Terjadi kesalahan saat analisis"
+          : t("ai.error.analyzeGeneric")
       );
     } finally {
       setIsLoading(false);
     }
-  }, [loadHistory, selectedFile]);
+  }, [loadHistory, notify, selectedFile]);
 
   const handleReset = useCallback(() => {
     setSelectedFile(null);
@@ -364,36 +378,36 @@ export default function AIAnalystClient() {
 
   return (
     <div className="space-y-5 pb-8">
-      <section className="rounded-[28px] border border-emerald-100/80 bg-white/95 p-4 shadow-[0_22px_60px_rgba(16,185,129,0.12)] backdrop-blur">
-        <div className="flex flex-col gap-3 border-b border-emerald-50 pb-4 sm:flex-row sm:items-end sm:justify-between">
+      <section className="rounded-[28px] border border-emerald-100/80 bg-white/95 p-4 shadow-[0_22px_60px_rgba(16,185,129,0.12)] backdrop-blur dark:border-emerald-900/60 dark:bg-slate-900/90">
+        <div className="flex flex-col gap-3 border-b border-emerald-50 pb-4 sm:flex-row sm:items-end sm:justify-between dark:border-emerald-900/40">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300">
                 <Cpu className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-lg font-black tracking-tight text-slate-900 sm:text-xl">
-                  AI Analyst
+                <p className="text-lg font-black tracking-tight text-slate-900 sm:text-xl dark:text-white">
+                  {t("ai.title")}
                 </p>
-                <p className="text-sm text-slate-600">
-                  Upload atau ambil foto, lalu AI akan memberi klasifikasi dan tips daur ulang.
+                <p className="text-sm text-slate-600 dark:text-slate-300">
+                  {t("ai.subtitle")}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200">
             <Camera className="h-3.5 w-3.5" />
             <Upload className="h-3.5 w-3.5" />
-            Camera + Upload AI
+            {t("ai.modeLabel")}
           </div>
         </div>
 
         <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-4">
-            <div className="rounded-3xl border border-emerald-100 bg-linear-to-br from-emerald-50/80 via-white to-white p-4">
+            <div className="rounded-3xl border border-emerald-100 bg-linear-to-br from-emerald-50/80 via-white to-white p-4 dark:border-emerald-900/60 dark:from-emerald-950/40 dark:via-slate-950 dark:to-slate-950">
               <div
-                className="group relative flex min-h-45 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-emerald-200 bg-white/80 p-4 text-center transition hover:border-emerald-400 hover:bg-emerald-50/80"
+                className="group relative flex min-h-45 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-emerald-200 bg-white/80 p-4 text-center transition hover:border-emerald-400 hover:bg-emerald-50/80 dark:border-emerald-900/60 dark:bg-slate-950/70 dark:hover:bg-emerald-950/40"
                 onDragOver={(event) => {
                   event.preventDefault();
                 }}
@@ -407,7 +421,7 @@ export default function AIAnalystClient() {
               >
                 {previewUrl ? (
                   <div className="w-full space-y-3 text-left">
-                    <div className="overflow-hidden rounded-2xl border border-emerald-100 bg-slate-50 shadow-sm">
+                    <div className="overflow-hidden rounded-2xl border border-emerald-100 bg-slate-50 shadow-sm dark:border-emerald-900/60 dark:bg-slate-950">
                       <Image
                         src={previewUrl}
                         alt="Preview sampah yang diunggah"
@@ -417,7 +431,7 @@ export default function AIAnalystClient() {
                         className="h-45 w-full object-cover sm:h-55"
                       />
                     </div>
-                    <div className="flex items-center justify-between gap-3 rounded-2xl bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+                    <div className="flex items-center justify-between gap-3 rounded-2xl bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200">
                       <div className="flex min-w-0 items-center gap-2">
                         <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                         <p className="truncate font-medium">
@@ -427,7 +441,7 @@ export default function AIAnalystClient() {
                       <button
                         type="button"
                         onClick={handleReset}
-                        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
+                        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 dark:text-emerald-200 dark:hover:bg-emerald-950/60"
                       >
                         <X className="h-3.5 w-3.5" />
                         Ganti
@@ -440,10 +454,10 @@ export default function AIAnalystClient() {
                       <ImagePlus className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-base font-semibold text-slate-900 sm:text-lg">
+                      <p className="text-base font-semibold text-slate-900 sm:text-lg dark:text-slate-100">
                         Drag & drop foto sampah di sini
                       </p>
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
                         Atau gunakan tombol di bawah untuk upload dan kamera.
                       </p>
                     </div>
@@ -470,7 +484,7 @@ export default function AIAnalystClient() {
                   type="button"
                   onClick={handleOpenFilePicker}
                   disabled={isLoading}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-900/60 dark:bg-slate-950 dark:text-emerald-300 dark:hover:bg-emerald-950/50"
                 >
                   <CloudUpload className="h-4 w-4" />
                   Upload Photo
@@ -479,7 +493,7 @@ export default function AIAnalystClient() {
                   type="button"
                   onClick={startCamera}
                   disabled={isLoading}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200 dark:hover:bg-emerald-950/60"
                 >
                   <Camera className="h-4 w-4" />
                   Use Camera
@@ -506,20 +520,20 @@ export default function AIAnalystClient() {
             </div>
 
             {isCameraOpen ? (
-              <div className="rounded-3xl border border-emerald-100 bg-white p-4">
+              <div className="rounded-3xl border border-emerald-100 bg-white p-4 dark:border-emerald-900/60 dark:bg-slate-950">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">Camera preview</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Camera preview</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Gunakan mode landscape agar sampah terlihat jelas.
                     </p>
                   </div>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200">
                     Live
                   </span>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-950">
+                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 dark:border-slate-800">
                   <video
                     ref={videoRef}
                     autoPlay
@@ -544,7 +558,7 @@ export default function AIAnalystClient() {
                     type="button"
                     onClick={stopCamera}
                     disabled={isLoading}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     <X className="h-4 w-4" />
                     Close Camera
@@ -552,8 +566,8 @@ export default function AIAnalystClient() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-3xl border border-dashed border-emerald-100 bg-emerald-50/60 p-4 text-sm text-slate-600">
-                Kamera belum aktif. Tekan <span className="font-semibold text-slate-800">Use Camera</span> untuk memulai atau upload foto langsung.
+              <div className="rounded-3xl border border-dashed border-emerald-100 bg-emerald-50/60 p-4 text-sm text-slate-600 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-slate-300">
+                Kamera belum aktif. Tekan <span className="font-semibold text-slate-800 dark:text-slate-100">Use Camera</span> untuk memulai atau upload foto langsung.
               </div>
             )}
 
@@ -572,18 +586,18 @@ export default function AIAnalystClient() {
 
           <div className="space-y-4">
             {result ? (
-              <div className="rounded-3xl border border-emerald-100 bg-linear-to-br from-emerald-50 to-white p-4 shadow-sm">
+              <div className="rounded-3xl border border-emerald-100 bg-linear-to-br from-emerald-50 to-white p-4 shadow-sm dark:border-emerald-900/60 dark:from-emerald-950/40 dark:to-slate-950">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                    <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       Hasil AI
                     </div>
-                    <h2 className="text-2xl font-black tracking-tight text-emerald-900">
-                      {WASTE_LABELS[result.label]}
+                    <h2 className="text-2xl font-black tracking-tight text-emerald-900 dark:text-emerald-200">
+                      {wasteLabels[result.label]}
                     </h2>
-                    <p className="mt-1 text-sm text-slate-600">
-                      AI berhasil mengklasifikasikan gambar ini sebagai {WASTE_LABELS[result.label].toLowerCase()}.
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                      AI berhasil mengklasifikasikan gambar ini sebagai {wasteLabels[result.label].toLowerCase()}.
                     </p>
                   </div>
 
@@ -592,20 +606,20 @@ export default function AIAnalystClient() {
                   </span>
                 </div>
 
-                <div className="mt-4 space-y-2 rounded-2xl bg-white p-3">
+                <div className="mt-4 space-y-2 rounded-2xl bg-white p-3 dark:bg-slate-950">
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-medium text-slate-600">Waste Type</span>
-                    <span className="font-semibold text-slate-900">
-                      {WASTE_LABELS[result.label]}
+                    <span className="font-medium text-slate-600 dark:text-slate-400">Waste Type</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      {wasteLabels[result.label]}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-medium text-slate-600">Confidence</span>
-                    <span className="font-semibold text-emerald-700">
+                    <span className="font-medium text-slate-600 dark:text-slate-400">Confidence</span>
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-200">
                       {confidencePercent}%
                     </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-emerald-100">
+                  <div className="h-2 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-900/40">
                     <div
                       className="h-full rounded-full bg-linear-to-r from-emerald-500 to-emerald-600 transition-all"
                       style={{ width: `${confidencePercent}%` }}
@@ -613,36 +627,36 @@ export default function AIAnalystClient() {
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-2xl border border-emerald-100 bg-white p-3 text-sm text-slate-700">
+                <div className="mt-4 rounded-2xl border border-emerald-100 bg-white p-3 text-sm text-slate-700 dark:border-emerald-900/60 dark:bg-slate-950 dark:text-slate-300">
                   {selectedGuide?.summary}
                 </div>
 
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-900/60 dark:bg-slate-950 dark:text-emerald-200 dark:hover:bg-emerald-950/40"
                 >
                   <ImagePlus className="h-4 w-4" />
                   Analyze another image
                 </button>
               </div>
             ) : (
-              <div className="rounded-3xl border border-dashed border-emerald-100 bg-white p-4 text-sm text-slate-500">
+              <div className="rounded-3xl border border-dashed border-emerald-100 bg-white p-4 text-sm text-slate-500 dark:border-emerald-900/60 dark:bg-slate-950 dark:text-slate-300">
                 Hasil klasifikasi akan muncul di card ini setelah gambar dianalisis.
               </div>
             )}
 
             {result ? (
-              <div className="rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm">
+              <div className="rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm dark:border-emerald-900/60 dark:bg-slate-950">
                 <div className="mb-3 flex items-center gap-2">
-                  <div className="rounded-full bg-emerald-100 p-2 text-emerald-700">
+                  <div className="rounded-full bg-emerald-100 p-2 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200">
                     <ScanSearch className="h-4 w-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                       What can this waste be used for?
                     </h3>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Rekomendasi singkat berdasarkan hasil klasifikasi.
                     </p>
                   </div>
@@ -652,7 +666,7 @@ export default function AIAnalystClient() {
                   {selectedGuide?.uses.map((item) => (
                     <li
                       key={item}
-                      className="flex items-start gap-2 rounded-2xl bg-emerald-50/70 px-3 py-2 text-sm text-slate-700"
+                      className="flex items-start gap-2 rounded-2xl bg-emerald-50/70 px-3 py-2 text-sm text-slate-700 dark:bg-emerald-950/40 dark:text-slate-200"
                     >
                       <span className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />
                       <span>{item}</span>
@@ -662,14 +676,14 @@ export default function AIAnalystClient() {
               </div>
             ) : null}
 
-            <div className="rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm">
+            <div className="rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm dark:border-emerald-900/60 dark:bg-slate-950">
               <div className="mb-3 flex items-center gap-2">
-                <div className="rounded-full bg-emerald-100 p-2 text-emerald-700">
+                <div className="rounded-full bg-emerald-100 p-2 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200">
                   <ArrowRight className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900">How to use AI</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">How to use AI</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Tiga langkah singkat untuk klasifikasi cepat.
                   </p>
                 </div>
@@ -683,9 +697,9 @@ export default function AIAnalystClient() {
                 ].map((step, index) => (
                   <div
                     key={step}
-                    className="flex items-center gap-3 rounded-2xl bg-slate-50 px-3 py-3 text-sm text-slate-700"
+                    className="flex items-center gap-3 rounded-2xl bg-slate-50 px-3 py-3 text-sm text-slate-700 dark:bg-slate-900 dark:text-slate-200"
                   >
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200">
                       {index + 1}
                     </span>
                     <span className="font-medium">{step}</span>
@@ -697,14 +711,14 @@ export default function AIAnalystClient() {
         </div>
       </section>
 
-      <section className="rounded-[28px] border border-emerald-100/80 bg-white/95 p-4 shadow-[0_18px_45px_rgba(16,185,129,0.08)] backdrop-blur">
+      <section className="rounded-[28px] border border-emerald-100/80 bg-white/95 p-4 shadow-[0_18px_45px_rgba(16,185,129,0.08)] backdrop-blur dark:border-emerald-900/60 dark:bg-slate-900/90">
         <div className="mb-3 flex items-center gap-2">
-          <div className="rounded-full bg-emerald-100 p-2 text-emerald-700">
+          <div className="rounded-full bg-emerald-100 p-2 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200">
             <Clock3 className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">History user</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">History user</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Riwayat analisis terbaru tampil dalam daftar compact.
             </p>
           </div>
@@ -713,13 +727,13 @@ export default function AIAnalystClient() {
         {historyLoading && history.length === 0 ? (
           <div className="space-y-2">
             {[0, 1, 2].map((item) => (
-              <div key={item} className="h-20 animate-pulse rounded-2xl bg-slate-100" />
+              <div key={item} className="h-20 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
             ))}
           </div>
         ) : history.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 p-4 text-center">
-            <p className="text-sm font-semibold text-slate-900">Belum ada history analisis.</p>
-            <p className="mt-1 text-sm text-slate-600">
+          <div className="rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/60 p-4 text-center dark:border-emerald-900/60 dark:bg-emerald-950/30">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Belum ada history analisis.</p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               Upload foto pertama untuk melihat riwayat di sini.
             </p>
           </div>
@@ -728,9 +742,9 @@ export default function AIAnalystClient() {
             {history.map((item) => (
               <article
                 key={item.id}
-                className="flex items-center gap-3 rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm"
+                className="flex items-center gap-3 rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm dark:border-emerald-900/60 dark:bg-slate-950"
               >
-                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-900">
                   {item.imageUrl ? (
                     <Image
                       src={item.imageUrl}
@@ -744,14 +758,14 @@ export default function AIAnalystClient() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-semibold text-slate-900">
+                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
                       {item.result}
                     </p>
-                    <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                    <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200">
                       {Math.round(item.confidence * 100)}%
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                     {formatDate(item.createdAt)}
                   </p>
                 </div>

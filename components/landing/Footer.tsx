@@ -1,28 +1,30 @@
 'use client';
 
 import Link from 'next/link';
+import { useSettings } from '@/hooks/use-settings';
 
 export default function Footer() {
+  const { t } = useSettings();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    Product: [
-      { label: 'Features', href: '#features' },
-      { label: 'Pricing', href: '#pricing' },
-      { label: 'Security', href: '#security' },
-      { label: 'Roadmap', href: '#roadmap' },
+    [t('landing.footer.section.product')]: [
+      { label: t('landing.footer.link.features'), href: '#features' },
+      { label: t('landing.footer.link.pricing'), href: '#pricing' },
+      { label: t('landing.footer.link.security'), href: '#security' },
+      { label: t('landing.footer.link.roadmap'), href: '#roadmap' },
     ],
-    Company: [
-      { label: 'About Us', href: '#about' },
-      { label: 'Blog', href: '#blog' },
-      { label: 'Careers', href: '#careers' },
-      { label: 'Contact', href: '#contact' },
+    [t('landing.footer.section.company')]: [
+      { label: t('landing.footer.link.about'), href: '#about' },
+      { label: t('landing.footer.link.blog'), href: '#blog' },
+      { label: t('landing.footer.link.careers'), href: '#careers' },
+      { label: t('landing.footer.link.contact'), href: '#contact' },
     ],
-    Legal: [
-      { label: 'Privacy Policy', href: '#privacy' },
-      { label: 'Terms of Service', href: '#terms' },
-      { label: 'Cookie Policy', href: '#cookies' },
-      { label: 'GDPR', href: '#gdpr' },
+    [t('landing.footer.section.legal')]: [
+      { label: t('landing.footer.link.privacy'), href: '#privacy' },
+      { label: t('landing.footer.link.terms'), href: '#terms' },
+      { label: t('landing.footer.link.cookies'), href: '#cookies' },
+      { label: t('landing.footer.link.gdpr'), href: '#gdpr' },
     ],
   };
 
@@ -44,7 +46,7 @@ export default function Footer() {
               Pilah Yuk!!
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              Platform gamifikasi daur ulang yang membantu masyarakat memilah sampah dengan cara yang menyenangkan dan interaktif.
+              {t('landing.footer.tagline')}
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
@@ -86,20 +88,20 @@ export default function Footer() {
         {/* Bottom section */}
         <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-gray-400 text-sm text-center md:text-left">
-            © {currentYear} Pilah Yuk!!. Semua hak dilindungi.
+            © {currentYear} Pilah Yuk!!. {t('landing.footer.copyright')}
           </p>
 
           <div className="flex items-center gap-6 text-sm">
             <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">
-              Status Page
+              {t('landing.footer.status')}
             </a>
             <div className="w-1 h-1 rounded-full bg-gray-700" />
             <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">
-              Hubungi Kami
+              {t('landing.footer.contactUs')}
             </a>
             <div className="w-1 h-1 rounded-full bg-gray-700" />
             <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">
-              Feedback
+              {t('landing.footer.feedback')}
             </a>
           </div>
         </div>
