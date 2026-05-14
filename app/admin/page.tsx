@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { BarChart3, Bot, Database, FileQuestion, Users } from "lucide-react";
+import { BarChart3, Bot, Database, FileQuestion, Sparkles, Users } from "lucide-react";
 
 import { authOptions } from "@/lib/auth";
 import AppShell from "@/components/shared/AppShell";
@@ -54,6 +54,14 @@ export default async function AdminPage() {
       icon: Database,
       href: "/admin/dataset",
     },
+    {
+      title: t("admin.cards.aiPilah.title" as never) || "AI Pilah",
+      description:
+        t("admin.cards.aiPilah.description" as never) ||
+        "Pantau dan kelola riwayat percakapan AI Pilah berbasis Gemini.",
+      icon: Sparkles,
+      href: "/admin/ai-pilah",
+    },
   ] as const;
 
   const displayName = session.user?.name ?? "Admin";
@@ -80,7 +88,7 @@ export default async function AdminPage() {
             const Icon = card.icon;
 
             return (
-              <Link key={card.title} href={card.href}>
+              <Link key={card.href} href={card.href}>
                 <article className="h-full cursor-pointer rounded-[1.5rem] border border-emerald-100 bg-white p-5 shadow-[0_18px_48px_-34px_rgba(16,185,129,0.35)] transition-transform duration-200 hover:-translate-y-1 dark:border-emerald-900/60 dark:bg-slate-900">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
                     <Icon className="h-6 w-6" aria-hidden="true" />

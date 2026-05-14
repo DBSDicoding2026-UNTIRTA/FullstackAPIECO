@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 
 import { authOptions } from "@/lib/auth";
 
-export async function requireUser() {
+interface RequireUserOptions {
+  readonly adminRedirectTo?: string;
+}
+
+export async function requireUser(options?: RequireUserOptions) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -11,7 +15,7 @@ export async function requireUser() {
   }
 
   if (session.user?.role === "ADMIN") {
-    redirect("/admin");
+    redirect(options?.adminRedirectTo ?? "/admin");
   }
 
   if (session.user?.role !== "USER") {

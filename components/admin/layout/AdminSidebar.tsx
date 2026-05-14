@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   BarChart3,
   Bot,
@@ -41,6 +41,7 @@ function getAdminRoutes(t: (key: string) => string): {
       { label: t("admin.sidebar.stats"), href: "/admin/statistik-upload", icon: BarChart3 },
       { label: t("admin.sidebar.monitoring"), href: "/admin/monitoring-model", icon: Bot },
       { label: t("admin.sidebar.dataset"), href: "/admin/dataset", icon: Database },
+      { label: t("AI PilahYuk"), href: "/admin/ai-pilah", icon: Bot },
     ],
     footer: [
       { label: t("admin.sidebar.settings"), href: "/settings", icon: Settings },
@@ -61,15 +62,14 @@ export default function AdminSidebar() {
   const { t } = useSettings();
   const routes = getAdminRoutes(t as (key: string) => string);
 
-  const [collapsed, setCollapsed] = useState(false);
-
-  /* Restore collapsed state from localStorage */
-  useEffect(() => {
+  const [collapsed, setCollapsed] = useState(() => {
     try {
       const stored = localStorage.getItem(SIDEBAR_KEY);
-      if (stored === "collapsed") setCollapsed(true);
+      return stored === "collapsed";
     } catch { /* noop */ }
-  }, []);
+
+    return false;
+  });
 
   const toggleCollapsed = () => {
     const next = !collapsed;

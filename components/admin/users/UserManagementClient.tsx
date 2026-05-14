@@ -67,7 +67,7 @@ function getInitials(name: string | null): string {
 export default function UserManagementClient({
   adminId,
 }: UserManagementClientProps) {
-  const { t } = useSettings();
+  const { language, t } = useSettings();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
@@ -80,12 +80,7 @@ export default function UserManagementClient({
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const locale = useMemo(() => {
-    const lang = typeof window !== "undefined"
-      ? document.documentElement.lang
-      : "id";
-    return lang === "en" ? "en-US" : "id-ID";
-  }, []);
+  const locale = language === "en" ? "en-US" : "id-ID";
 
   const dateFormatter = useMemo(
     () =>
@@ -137,7 +132,7 @@ export default function UserManagementClient({
   );
 
   useEffect(() => {
-    void fetchUsers(1, search);
+    void Promise.resolve().then(() => fetchUsers(1, search));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

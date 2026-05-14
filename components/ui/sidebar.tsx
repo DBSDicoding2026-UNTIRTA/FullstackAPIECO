@@ -8,11 +8,11 @@ import {
   HelpCircle,
   Home,
   Brain,
-  Trophy,
   BarChart2,
   Settings,
   Cpu,
   Recycle,
+  Bot,
 } from "lucide-react";
 import { NavIcon } from "./NavIcon";
 import { useSettings } from "@/hooks/use-settings";
@@ -40,12 +40,11 @@ export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
   const pathname = usePathname() || "/";
   const { profile, t } = useSettings();
 
-  /* User-only routes — admin uses its own AdminSidebar */
   const routes: RouteItem[] = [
     { label: t("nav.dashboard"), href: "/dashboard", icon: Home },
     { label: t("nav.quiz"), href: "/quiz", icon: Brain },
     { label: t("nav.aiAnalyst"), href: "/ai-analyst", icon: Cpu },
-    { label: t("nav.leaderboard"), href: "/dashboard/leaderboard", icon: Trophy },
+    { label: "AI Pilah", href: "/ai-pilah", icon: Bot },
     { label: t("nav.statistics"), href: "/dashboard/statistics", icon: BarChart2 },
     { label: t("nav.settings"), href: "/settings", icon: Settings },
   ];

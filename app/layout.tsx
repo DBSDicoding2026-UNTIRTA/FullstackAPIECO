@@ -40,8 +40,10 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased${themeClass}`}
     >
-      <body className="min-h-full flex flex-col">
+      <head>
         <ThemeBootScript theme={initialSettings.preferences.theme} />
+      </head>
+      <body className="min-h-full flex flex-col">
         <SessionProvider session={session}>
           <SettingsProvider initialSettings={initialSettings}>
             {children}
