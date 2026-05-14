@@ -42,7 +42,7 @@ export default async function Home() {
       <Navbar ctaLabel={ctaLabel} ctaHref={ctaHref} />
       <HeroSection />
       <HowItWorksSection />
-      <FeaturesSection />
+      {/* <FeaturesSection /> */}
       <DemoPreviewSection />
       <ImpactStatsSection />
       <LeaderboardPreview />

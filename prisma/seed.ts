@@ -9,29 +9,74 @@ const pool = new Pool({
 });
 
 const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+
+const prisma = new PrismaClient({
+  adapter,
+});
 
 export async function seedAdmin(): Promise<void> {
-  await prisma.user.upsert({
-    where: {
+  const admins = [
+    {
       email: "memoriesendx@gmail.com",
+      name: "Dafa Rizqy",
     },
-    update: {
-      name: "Memories End XYZ",
-      role: "ADMIN",
-      points: 0,
-      level: 1,
-      password: null,
+    {
+      email: "lutfilawliet2.0@gmail.com",
+      name: "Muhamad Lutfi",
     },
-    create: {
-      email: "memoriesendx@gmail.com",
-      name: "Memories End XYZ",
-      role: "ADMIN",
-      points: 0,
-      level: 1,
-      password: null,
+    {
+      email: "nenih170805@gmail.com",
+      name: "Dafa Rizqy",
     },
-  });
+    {
+      email: "3337230019@untirta.ac.id",
+      name: "Nurul Santi Hafifah",
+    },
+    {
+      email: "sxrahaulia@gmail.com",
+      name: "Sarah Aulia Rahmah",
+    },
+    {
+      email: "sirrulfatih471@gmail.com",
+      name: "Sirrul Fatih Ahdiat",
+    },
+    {
+      email: "fatalaguna6@gmail.com",
+      name: "Guna Fatala",
+    },
+  ];
 
-  console.log("✅ Admin seeded");
+  for (const admin of admins) {
+    await prisma.user.upsert({
+      where: {
+        email: admin.email,
+      },
+      update: {
+        name: admin.name,
+        role: "ADMIN",
+        points: 0,
+        level: 1,
+        password: null,
+      },
+      create: {
+        email: admin.email,
+        name: admin.name,
+        role: "ADMIN",
+        points: 0,
+        level: 1,
+        password: null,
+      },
+    });
+  }
+
+  console.log("✅ All admins seeded");
 }
+
+seedAdmin()
+  .catch((error) => {
+    console.error("❌ Seed failed:", error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

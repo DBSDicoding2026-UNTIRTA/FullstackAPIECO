@@ -2,6 +2,7 @@ export type TeamMember = {
   id: string;
   name: string;
   role: string;
+  dicodingId?: string;
   image?: string;
   isPlaceholder?: boolean;
 };
@@ -9,39 +10,45 @@ export type TeamMember = {
 export const teamData: TeamMember[] = [
   {
     id: 'sarah',
-    name: 'Sarah',
+    name: 'Sarah Aulia Rahmah',
     role: 'Machine Learning',
+    dicodingId: 'CDCC318D6X2160',
     image: '/member/sarah.jpeg',
   },
   {
     id: 'nunu',
-    name: 'Nunu',
-    role: 'Frontend Developer',
+    name: 'Nurul Santi Hafifah',
+    role: 'Machine Learning',
+    dicodingId: 'CDCC318D6X2161',
     image: '/member/nunu.jpeg',
   },
   {
-    id: 'placeholder-1',
-    name: 'Belum diisi',
-    role: 'Coming soon',
-    isPlaceholder: true,
+    id: 'sirrul',
+    name: 'Sirrul Fatih Ahdiat',
+    role: 'Fullstack Developer',
+    dicodingId: 'CFCC318D6Y2276',
+    image: '/member/sirrul.jpeg',
   },
   {
-    id: 'placeholder-2',
-    name: 'Belum diisi',
-    role: 'Coming soon',
-    isPlaceholder: true,
+    id: 'dafa',
+    name: 'Dafa Rizqy',
+    role: 'Fullstack Developer',
+    dicodingId: 'CFCC318D6Y2872',
+    image: '/member/dafa.jpeg',
   },
   {
-    id: 'placeholder-3',
-    name: 'Belum diisi',
-    role: 'Coming soon',
-    isPlaceholder: true,
+    id: 'lutfi',
+    name: 'Muhamad Lutfi',
+    role: 'AI Engineer',
+    dicodingId: 'CACC318D6Y2217',
+    image: '/member/lutfi.jpeg',
   },
   {
-    id: 'placeholder-4',
-    name: 'Belum diisi',
-    role: 'Coming soon',
-    isPlaceholder: true,
+    id: 'guna',
+    name: 'Guna Fatala',
+    role: 'AI Engineer',
+    dicodingId: 'CACC318D6Y2519',
+    image: '/member/guna.jpeg',
   },
 ];
 
