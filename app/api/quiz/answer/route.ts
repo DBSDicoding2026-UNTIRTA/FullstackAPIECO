@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/lib/auth";
@@ -96,8 +97,14 @@ export async function POST(req: Request) {
     },
     select: {
       id: true,
+      moduleId: true,
       correctAnswer: true,
       points: true,
+      module: {
+        select: {
+          xpReward: true,
+        },
+      },
     },
   });
 
@@ -109,7 +116,6 @@ export async function POST(req: Request) {
   }
 
   const isCorrect = selectedAnswer === question.correctAnswer;
-  const pointsEarned = isCorrect ? question.points : 0;
 
   const result = await prisma.$transaction(async (tx) => {
     const currentUser = await tx.user.findUnique({
@@ -127,9 +133,58 @@ export async function POST(req: Request) {
       throw new Error("User not found");
     }
 
-    const nextTotalPoints = isCorrect
-      ? currentUser.points + pointsEarned
-      : currentUser.points;
+    const previousCorrectAttempt = await tx.quizAttempt.findFirst({
+      where: {
+        userId: user.id,
+        questionId: question.id,
+        isCorrect: true,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const correctModuleAttempts = await tx.quizAttempt.findMany({
+      where: {
+        userId: user.id,
+        isCorrect: true,
+        question: {
+          moduleId: question.moduleId,
+        },
+      },
+      distinct: ["questionId"],
+      select: {
+        questionId: true,
+      },
+    });
+
+    const moduleQuestionCount = await tx.quizQuestion.count({
+      where: {
+        moduleId: question.moduleId,
+      },
+    });
+
+    const correctQuestionIds = new Set(
+      correctModuleAttempts.map((attempt) => attempt.questionId),
+    );
+    const wasModuleCompleted =
+      moduleQuestionCount > 0 && correctQuestionIds.size >= moduleQuestionCount;
+
+    const questionPointsEarned =
+      isCorrect && !previousCorrectAttempt ? question.points : 0;
+
+    if (isCorrect) {
+      correctQuestionIds.add(question.id);
+    }
+
+    const isModuleCompleted =
+      moduleQuestionCount > 0 && correctQuestionIds.size >= moduleQuestionCount;
+    const moduleBonusEarned =
+      isCorrect && !wasModuleCompleted && isModuleCompleted
+        ? question.module.xpReward
+        : 0;
+    const totalPointsEarned = questionPointsEarned + moduleBonusEarned;
+    const nextTotalPoints = currentUser.points + totalPointsEarned;
     const nextLevel = calculateLevel(nextTotalPoints);
 
     await tx.quizAttempt.create({
@@ -139,14 +194,18 @@ export async function POST(req: Request) {
         selectedAnswer,
         correctAnswer: question.correctAnswer,
         isCorrect,
-        pointsEarned,
+        pointsEarned: totalPointsEarned,
       },
     });
 
-    if (!isCorrect) {
+    if (totalPointsEarned === 0) {
       return {
         totalPoints: currentUser.points,
         level: currentUser.level,
+        pointsEarned: totalPointsEarned,
+        questionPointsEarned,
+        moduleBonusEarned,
+        moduleCompleted: isModuleCompleted,
       };
     }
 
@@ -167,13 +226,24 @@ export async function POST(req: Request) {
     return {
       totalPoints: updatedUser.points,
       level: updatedUser.level,
+      pointsEarned: totalPointsEarned,
+      questionPointsEarned,
+      moduleBonusEarned,
+      moduleCompleted: isModuleCompleted,
     };
   });
+
+  if (result.pointsEarned > 0) {
+    revalidatePath("/dashboard");
+  }
 
   return NextResponse.json({
     isCorrect,
     correctAnswer: question.correctAnswer,
-    pointsEarned,
+    pointsEarned: result.pointsEarned,
+    questionPointsEarned: result.questionPointsEarned,
+    moduleBonusEarned: result.moduleBonusEarned,
+    moduleCompleted: result.moduleCompleted,
     totalPoints: result.totalPoints,
     level: result.level,
   });

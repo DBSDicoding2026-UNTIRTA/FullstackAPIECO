@@ -158,6 +158,7 @@ export default function QuizForm() {
   return (
     <form
       onSubmit={handleSubmit}
+      autoComplete="off"
       className="rounded-[2rem] border border-emerald-100 bg-white p-6 shadow-[0_18px_48px_-34px_rgba(16,185,129,0.35)] dark:border-emerald-900/60 dark:bg-slate-900"
     >
       <div className="flex items-center gap-2">
@@ -252,8 +253,10 @@ export default function QuizForm() {
           {t("admin.quiz.form.questionLabel")}
         </label>
         <textarea
+          name="quizQuestion"
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
+          autoComplete="new-password"
           required
           placeholder={t("admin.quiz.form.questionPlaceholder")}
           className="mt-2 min-h-28 w-full rounded-2xl border border-emerald-100 p-4 text-sm outline-none focus:border-emerald-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-100"
@@ -262,32 +265,40 @@ export default function QuizForm() {
 
       <div className="mt-5 grid gap-3">
         <input
+          name="quizChoiceA"
           value={optionA}
           onChange={(event) => setOptionA(event.target.value)}
+          autoComplete="new-password"
           required
           placeholder={t("admin.quiz.form.optionA")}
           className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-100"
         />
 
         <input
+          name="quizChoiceB"
           value={optionB}
           onChange={(event) => setOptionB(event.target.value)}
+          autoComplete="new-password"
           required
           placeholder={t("admin.quiz.form.optionB")}
           className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-100"
         />
 
         <input
+          name="quizChoiceC"
           value={optionC}
           onChange={(event) => setOptionC(event.target.value)}
+          autoComplete="new-password"
           required
           placeholder={t("admin.quiz.form.optionC")}
           className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-100"
         />
 
         <input
+          name="quizChoiceD"
           value={optionD}
           onChange={(event) => setOptionD(event.target.value)}
+          autoComplete="new-password"
           required
           placeholder={t("admin.quiz.form.optionD")}
           className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-slate-100"

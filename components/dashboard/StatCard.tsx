@@ -63,7 +63,19 @@ export default function StatCard({ item, index }: StatCardProps) {
       <p className="mt-1 text-xl font-bold text-emerald-700 dark:text-emerald-300">{item.value}</p>
       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.caption}</p>
 
-      <p className="mt-3 h-1.5 w-14 rounded-full bg-linear-to-r from-emerald-500 to-lime-400" aria-hidden="true" />
+      <div
+        className="mt-3 h-1.5 w-full max-w-24 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-950/50"
+        aria-label={`${item.label} progress ${item.progressPercent}%`}
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={item.progressPercent}
+      >
+        <div
+          className="h-full rounded-full bg-linear-to-r from-emerald-500 to-lime-400 transition-[width] duration-500"
+          style={{ width: `${item.progressPercent}%` }}
+        />
+      </div>
     </article>
   );
 }

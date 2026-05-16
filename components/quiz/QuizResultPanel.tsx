@@ -5,12 +5,16 @@ type QuizResultPanelProps = {
   isCorrect: boolean;
   correctAnswer: string;
   pointsEarned: number;
+  moduleBonusEarned: number;
+  moduleCompleted: boolean;
 };
 
 export default function QuizResultPanel({
   isCorrect,
   correctAnswer,
   pointsEarned,
+  moduleBonusEarned,
+  moduleCompleted,
 }: QuizResultPanelProps) {
   const { t } = useSettings();
   return (
@@ -37,6 +41,15 @@ export default function QuizResultPanel({
           <p className="text-sm font-semibold">
             {t("quiz.result.correctAnswer", { answer: correctAnswer })}
           </p>
+          {moduleBonusEarned > 0 ? (
+            <p className="mt-1 text-sm font-black">
+              {t("quiz.result.moduleBonus", { points: moduleBonusEarned })}
+            </p>
+          ) : moduleCompleted && isCorrect && pointsEarned === 0 ? (
+            <p className="mt-1 text-sm font-semibold">
+              {t("quiz.result.alreadyCompleted")}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

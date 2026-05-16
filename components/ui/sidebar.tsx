@@ -26,8 +26,7 @@ interface RouteItem {
 }
 
 function isActive(pathname: string, href: string) {
-  if (href === "/dashboard")
-    return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+  if (href === "/dashboard") return pathname === "/dashboard";
   return pathname === href || pathname.startsWith(href + "/");
 }
 
@@ -36,7 +35,7 @@ export interface SidebarProps {
   userName?: string;
 }
 
-export function Sidebar({ variant = "user", userName = "User" }: SidebarProps) {
+export function Sidebar({ userName = "User" }: SidebarProps) {
   const pathname = usePathname() || "/";
   const { profile, t } = useSettings();
 

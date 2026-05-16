@@ -189,34 +189,44 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
               Pertanyaan
             </label>
             <textarea
+              name="editQuizQuestion"
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
+              autoComplete="new-password"
               className="mt-2 min-h-24 w-full rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500"
             />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <input
+              name="editQuizChoiceA"
               value={optionA}
               onChange={(event) => setOptionA(event.target.value)}
+              autoComplete="new-password"
               placeholder="Pilihan A"
               className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500"
             />
             <input
+              name="editQuizChoiceB"
               value={optionB}
               onChange={(event) => setOptionB(event.target.value)}
+              autoComplete="new-password"
               placeholder="Pilihan B"
               className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500"
             />
             <input
+              name="editQuizChoiceC"
               value={optionC}
               onChange={(event) => setOptionC(event.target.value)}
+              autoComplete="new-password"
               placeholder="Pilihan C"
               className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500"
             />
             <input
+              name="editQuizChoiceD"
               value={optionD}
               onChange={(event) => setOptionD(event.target.value)}
+              autoComplete="new-password"
               placeholder="Pilihan D"
               className="rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500"
             />
@@ -249,6 +259,7 @@ export default function QuizCard({ quiz, index, modules }: QuizCardProps) {
                 min={1}
                 value={points}
                 onChange={(event) => setPoints(Number(event.target.value))}
+                autoComplete="off"
                 className="mt-2 w-full rounded-2xl border border-emerald-100 p-3 text-sm outline-none focus:border-emerald-500"
               />
             </div>

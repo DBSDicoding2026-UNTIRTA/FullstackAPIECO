@@ -77,6 +77,7 @@ export default function QuizSummary({
 
         <Link
           href="/dashboard"
+          prefetch={false}
           className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-100 bg-white px-6 py-3 font-black text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-900/60 dark:bg-slate-900 dark:text-emerald-200 dark:hover:bg-emerald-950/20"
         >
           <Home className="h-5 w-5" />

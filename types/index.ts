@@ -51,6 +51,7 @@ export interface DashboardStatItem {
   readonly caption: string;
   readonly icon: string;
   readonly tone: "emerald" | "sky" | "amber" | "violet";
+  readonly progressPercent: number;
 }
 
 export interface LeaderboardEntry {
@@ -75,4 +76,8 @@ export interface UserBadge {
   readonly description: string;
   readonly icon: string;
   readonly unlocked: boolean;
+  readonly current: number;
+  readonly target: number;
+  readonly progressPercent: number;
+  readonly progressLabel: string;
 }

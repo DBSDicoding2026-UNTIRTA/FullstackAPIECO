@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { AlertCircle, ArrowRight, Loader2 } from "lucide-react";
 
@@ -15,6 +15,8 @@ type AnswerResult = {
   isCorrect: boolean;
   correctAnswer: string;
   pointsEarned: number;
+  moduleBonusEarned: number;
+  moduleCompleted: boolean;
   totalPoints: number;
   level: number;
 };
@@ -49,7 +51,7 @@ export default function UserQuizClient() {
     return Math.min(currentIndex + (result ? 1 : 0), quizzes.length);
   }, [currentIndex, quizzes.length, result]);
 
-  async function fetchModules(): Promise<QuizModuleRecord[]> {
+  const fetchModules = useCallback(async (): Promise<QuizModuleRecord[]> => {
     const res = await fetch("/api/quiz/modules", {
       cache: "no-store",
     });
@@ -63,9 +65,9 @@ export default function UserQuizClient() {
     }
 
     return (await res.json()) as QuizModuleRecord[];
-  }
+  }, [t]);
 
-  async function fetchModuleQuizzes(moduleId: string): Promise<UserQuizQuestion[]> {
+  const fetchModuleQuizzes = useCallback(async (moduleId: string): Promise<UserQuizQuestion[]> => {
     const res = await fetch(`/api/quiz?moduleId=${encodeURIComponent(moduleId)}`, {
       cache: "no-store",
     });
@@ -79,9 +81,9 @@ export default function UserQuizClient() {
     }
 
     return (await res.json()) as UserQuizQuestion[];
-  }
+  }, [t]);
 
-  async function loadModules() {
+  const loadModules = useCallback(async () => {
     setLoadingModules(true);
     setError(null);
 
@@ -93,7 +95,7 @@ export default function UserQuizClient() {
     } finally {
       setLoadingModules(false);
     }
-  }
+  }, [fetchModules, t]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -103,7 +105,7 @@ export default function UserQuizClient() {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [loadModules]);
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -331,6 +333,8 @@ export default function UserQuizClient() {
             isCorrect={result.isCorrect}
             correctAnswer={result.correctAnswer}
             pointsEarned={result.pointsEarned}
+            moduleBonusEarned={result.moduleBonusEarned}
+            moduleCompleted={result.moduleCompleted}
           />
 
           <button

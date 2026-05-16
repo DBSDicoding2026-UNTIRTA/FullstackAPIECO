@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
@@ -72,12 +73,12 @@ export default function UploadCard() {
         </div>
       </div>
 
-      <button
-        type="button"
+      <Link
+        href="/ai-analyst"
         className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-linear-to-r from-emerald-600 to-lime-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:brightness-105 active:scale-[0.99]"
       >
         {t("dashboard.upload.selectImage")}
-      </button>
+      </Link>
     </section>
   );
 }

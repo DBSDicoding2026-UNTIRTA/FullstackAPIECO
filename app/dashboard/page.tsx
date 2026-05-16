@@ -1,4 +1,3 @@
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 import DashboardShell from "../../components/dashboard/DashboardShell";
@@ -10,36 +9,35 @@ import StatCard from "@/components/dashboard/StatCard";
 import UploadCard from "@/components/dashboard/UploadCard";
 import AppNavbar from "@/components/shared/AppNavbar";
 import Container from "@/components/shared/Container";
-import { authOptions } from "@/lib/auth";
-import { DASHBOARD_USER, getDashboardData } from "@/data/dashboard";
+import { getUserDashboardData } from "@/lib/dashboard/server";
 import { getGlobalSettingsForSession } from "@/lib/settings/server";
 import { translate } from "@/lib/i18n/dictionaries";
+import { requireUser } from "@/lib/user-auth";
 
 import AppShell from "@/components/shared/AppShell";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  const session = await requireUser();
+  const userId = session.user?.id;
 
-  if (!session) {
+  if (!userId) {
     redirect("/login");
-  }
-
-  if (session.user?.role === "ADMIN") {
-    redirect("/admin");
   }
 
   const settings = await getGlobalSettingsForSession(session);
   const t = (key: Parameters<typeof translate>[1], values?: Record<string, string | number>) =>
     translate(settings.preferences.language, key, values);
-  const { stats, challenges, leaderboard, badges } = getDashboardData(t);
-
-  // TODO: profile completion nanti.
-  // TODO: update umur nanti.
-  // TODO: integrasi statistik user nanti.
-  const dashboardUser = {
-    ...DASHBOARD_USER,
-    name: session.user?.name ?? DASHBOARD_USER.name,
-  };
+  const {
+    user: dashboardUser,
+    stats,
+    challenges,
+    leaderboard,
+    badges,
+  } = await getUserDashboardData({
+    userId,
+    fallbackName: session.user?.name,
+    t,
+  });
 
   const navbarUser = {
     name: session.user?.name ?? null,

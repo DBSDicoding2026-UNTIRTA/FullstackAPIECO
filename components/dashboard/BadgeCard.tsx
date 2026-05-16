@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 import { useSettings } from "@/hooks/use-settings";
@@ -14,13 +14,6 @@ interface BadgeCardProps {
 export default function BadgeCard({ badge, index }: BadgeCardProps) {
   const { t } = useSettings();
   const cardRef = useRef<HTMLElement | null>(null);
-  const milestoneProgress = useMemo(() => {
-    if (badge.unlocked) {
-      return 100;
-    }
-
-    return Math.min(92, 52 + index * 14);
-  }, [badge.unlocked, index]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -84,12 +77,14 @@ export default function BadgeCard({ badge, index }: BadgeCardProps) {
       <div className="mt-3 space-y-1.5">
         <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
           <span>{t("dashboard.badge.milestone")}</span>
-          <span className="font-semibold text-emerald-700 dark:text-emerald-300">{milestoneProgress}%</span>
+          <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+            {badge.progressLabel}
+          </span>
         </div>
         <div className="h-1.5 rounded-full bg-emerald-100 dark:bg-emerald-950/50">
           <div
             className="h-1.5 rounded-full bg-linear-to-r from-emerald-500 to-lime-400"
-            style={{ width: `${milestoneProgress}%` }}
+            style={{ width: `${badge.progressPercent}%` }}
           />
         </div>
       </div>
