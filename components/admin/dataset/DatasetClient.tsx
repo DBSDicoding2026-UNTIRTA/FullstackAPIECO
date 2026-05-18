@@ -210,7 +210,6 @@ export default function DatasetClient() {
                   <th className="px-6 py-3">{t("admin.dataset.category" as never) || "Kategori"}</th>
                   <th className="px-6 py-3">{t("admin.dataset.confidence" as never) || "Confidence"}</th>
                   <th className="px-6 py-3">{t("admin.dataset.date" as never) || "Tanggal"}</th>
-                  <th className="px-6 py-3">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-emerald-50 dark:divide-emerald-900/40">
@@ -287,21 +286,6 @@ export default function DatasetClient() {
                     <td className="whitespace-nowrap px-6 py-3 text-slate-500 dark:text-slate-400">
                       {formatDate(item.createdAt)}
                     </td>
-
-                    {/* Action */}
-                    <td className="px-6 py-3">
-                      {item.imageUrl && (
-                        <a
-                          href={item.imageUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-emerald-700 transition hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-950/40"
-                        >
-                          <ExternalLink className="h-3.5 w-3.5" />
-                          Lihat
-                        </a>
-                      )}
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -318,10 +302,10 @@ export default function DatasetClient() {
                 <button
                   type="button"
                   disabled={page <= 1}
-                    onClick={() => {
-                      setLoading(true);
-                      setPage((p) => p - 1);
-                    }}
+                  onClick={() => {
+                    setLoading(true);
+                    setPage((p) => p - 1);
+                  }}
                   className="rounded-lg p-1.5 text-slate-500 transition hover:bg-emerald-50 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-emerald-950/40"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -329,10 +313,10 @@ export default function DatasetClient() {
                 <button
                   type="button"
                   disabled={page >= (data?.totalPages ?? 1)}
-                    onClick={() => {
-                      setLoading(true);
-                      setPage((p) => p + 1);
-                    }}
+                  onClick={() => {
+                    setLoading(true);
+                    setPage((p) => p + 1);
+                  }}
                   className="rounded-lg p-1.5 text-slate-500 transition hover:bg-emerald-50 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-emerald-950/40"
                 >
                   <ChevronRight className="h-4 w-4" />
