@@ -21,19 +21,23 @@ export default function LeaderboardPreview() {
     const section = sectionRef.current;
 
     const ctx = gsap.context(() => {
-      const rows = container.querySelectorAll('[data-rank]');
+      const rows = gsap.utils.toArray<HTMLElement>(
+        container.querySelectorAll('[data-rank]'),
+      );
 
-      gsap.from(rows, {
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 60%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        x: -30,
-        stagger: 0.1,
-        duration: 0.6,
-      });
+      if (rows.length > 0) {
+        gsap.from(rows, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 60%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 0,
+          x: -30,
+          stagger: 0.1,
+          duration: 0.6,
+        });
+      }
     }, section);
 
     return () => ctx.revert();

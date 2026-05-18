@@ -20,39 +20,24 @@ export default function FeaturesSection() {
     const section = sectionRef.current;
 
     const ctx = gsap.context(() => {
-      const cards = container.querySelectorAll('[data-feature]');
+      const cards = gsap.utils.toArray<HTMLElement>(
+        container.querySelectorAll('[data-feature]'),
+      );
 
-      gsap.from(cards, {
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 60%',
-          end: 'center 20%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 40,
-        stagger: 0.1,
-        duration: 0.6,
-      });
-
-      // Add hover animation context
-      cards?.forEach((card) => {
-        card.addEventListener('mouseenter', () => {
-          gsap.to(card, {
-            y: -8,
-            duration: 0.3,
-            overwrite: 'auto',
-          });
+      if (cards.length > 0) {
+        gsap.from(cards, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 60%',
+            end: 'center 20%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 0,
+          y: 40,
+          stagger: 0.1,
+          duration: 0.6,
         });
-
-        card.addEventListener('mouseleave', () => {
-          gsap.to(card, {
-            y: 0,
-            duration: 0.3,
-            overwrite: 'auto',
-          });
-        });
-      });
+      }
     }, section);
 
     return () => ctx.revert();
@@ -84,7 +69,7 @@ export default function FeaturesSection() {
             <div
               key={feature.id}
               data-feature={feature.id}
-              className="group relative cursor-pointer rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-emerald-200 hover:shadow-xl md:p-8 dark:border-slate-800 dark:bg-slate-900"
+              className="group relative cursor-pointer rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-emerald-200 hover:shadow-xl md:p-8 dark:border-slate-800 dark:bg-slate-900"
             >
               {/* Background gradient on hover */}
               <div

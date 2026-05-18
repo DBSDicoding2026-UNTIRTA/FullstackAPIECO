@@ -6,18 +6,23 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
+type AnimationTargets = HTMLElement | HTMLElement[];
+
+const hasTargets = (elements: AnimationTargets) =>
+  Array.isArray(elements) ? elements.length > 0 : Boolean(elements);
+
 /**
  * Utility function untuk fade-in animation dengan ScrollTrigger
- * @param elements - Selector atau HTMLElement array
+ * @param elements - HTMLElement atau HTMLElement array
  * @param trigger - Trigger element
  * @param stagger - Stagger delay antara elements
  */
 export const fadeInOnScroll = (
-  elements: string | HTMLElement[],
+  elements: AnimationTargets,
   trigger: HTMLElement | null,
   stagger = 0.1
 ) => {
-  if (!trigger) return;
+  if (!trigger || !hasTargets(elements)) return;
 
   gsap.from(elements, {
     scrollTrigger: {
@@ -34,18 +39,18 @@ export const fadeInOnScroll = (
 
 /**
  * Utility function untuk slide-in animation dengan ScrollTrigger
- * @param elements - Selector atau HTMLElement array
+ * @param elements - HTMLElement atau HTMLElement array
  * @param trigger - Trigger element
  * @param direction - 'left' | 'right'
  * @param stagger - Stagger delay antara elements
  */
 export const slideInOnScroll = (
-  elements: string | HTMLElement[],
+  elements: AnimationTargets,
   trigger: HTMLElement | null,
   direction: 'left' | 'right' = 'left',
   stagger = 0.1
 ) => {
-  if (!trigger) return;
+  if (!trigger || !hasTargets(elements)) return;
 
   const xValue = direction === 'left' ? -40 : 40;
 
@@ -228,6 +233,8 @@ export const staggerAnimation = (
     ease?: string;
   }
 ) => {
+  if (elements.length === 0) return;
+
   gsap.from(elements, {
     opacity: config.from?.opacity ?? 0,
     y: config.from?.y ?? 0,

@@ -60,33 +60,53 @@ export default function DashboardDecorations() {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!wrapperRef.current) return;
+
     const ctx = gsap.context(() => {
-      gsap.to(".dashboard-float", {
-        y: (index: number) => (index % 2 === 0 ? -12 : 10),
-        x: (index: number) => (index % 3 === 0 ? 8 : -7),
-        duration: (index: number) => 5.6 + index * 0.5,
-        yoyo: true,
-        repeat: -1,
-        ease: "sine.inOut",
-        stagger: 0.16,
-      });
+      if (!wrapperRef.current) return;
 
-      gsap.to(".dashboard-rotate", {
-        rotate: 360,
-        duration: 24,
-        repeat: -1,
-        ease: "none",
-      });
+      const floatingItems = gsap.utils.toArray<HTMLElement>(
+        wrapperRef.current.querySelectorAll("[data-dashboard-float]"),
+      );
+      const rotatingItems = gsap.utils.toArray<HTMLElement>(
+        wrapperRef.current.querySelectorAll("[data-dashboard-rotate]"),
+      );
+      const blobs = gsap.utils.toArray<HTMLElement>(
+        wrapperRef.current.querySelectorAll("[data-dashboard-blob]"),
+      );
 
-      gsap.to(".dashboard-blob", {
-        x: "+=28",
-        y: "-=20",
-        duration: 9,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 0.5,
-      });
+      if (floatingItems.length > 0) {
+        gsap.to(floatingItems, {
+          y: (index: number) => (index % 2 === 0 ? -12 : 10),
+          x: (index: number) => (index % 3 === 0 ? 8 : -7),
+          duration: (index: number) => 5.6 + index * 0.5,
+          yoyo: true,
+          repeat: -1,
+          ease: "sine.inOut",
+          stagger: 0.16,
+        });
+      }
+
+      if (rotatingItems.length > 0) {
+        gsap.to(rotatingItems, {
+          rotate: 360,
+          duration: 24,
+          repeat: -1,
+          ease: "none",
+        });
+      }
+
+      if (blobs.length > 0) {
+        gsap.to(blobs, {
+          x: "+=28",
+          y: "-=20",
+          duration: 9,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          stagger: 0.5,
+        });
+      }
     }, wrapperRef);
 
     return () => {
@@ -96,14 +116,16 @@ export default function DashboardDecorations() {
 
   return (
     <div ref={wrapperRef} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      <div className="dashboard-blob absolute -left-16 top-24 h-48 w-48 rounded-full bg-emerald-300/20 blur-3xl sm:h-64 sm:w-64" />
-      <div className="dashboard-blob absolute -right-24 top-1/3 h-64 w-64 rounded-full bg-lime-300/20 blur-3xl sm:h-80 sm:w-80" />
-      <div className="dashboard-blob absolute bottom-0 left-1/4 h-56 w-56 rounded-full bg-emerald-200/20 blur-3xl sm:h-72 sm:w-72" />
+      <div data-dashboard-blob className="absolute -left-16 top-24 h-48 w-48 rounded-full bg-emerald-300/20 blur-3xl sm:h-64 sm:w-64" />
+      <div data-dashboard-blob className="absolute -right-24 top-1/3 h-64 w-64 rounded-full bg-lime-300/20 blur-3xl sm:h-80 sm:w-80" />
+      <div data-dashboard-blob className="absolute bottom-0 left-1/4 h-56 w-56 rounded-full bg-emerald-200/20 blur-3xl sm:h-72 sm:w-72" />
 
       {DASHBOARD_DECORATIONS.map((item) => (
         <span
           key={item.id}
-          className={`dashboard-float absolute opacity-20 ${item.className} ${item.rotate ? "dashboard-rotate" : ""}`}
+          data-dashboard-float
+          data-dashboard-rotate={item.rotate ? "" : undefined}
+          className={`absolute opacity-20 ${item.className}`}
         >
           {item.icon}
         </span>

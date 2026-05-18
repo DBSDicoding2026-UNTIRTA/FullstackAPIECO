@@ -17,17 +17,31 @@ export default function RegisterCard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!cardRef.current) return;
+
     const ctx = gsap.context(() => {
+      if (!cardRef.current) return;
+
+      const registerCards = [cardRef.current];
+      const registerInputs = gsap.utils.toArray<HTMLElement>(
+        cardRef.current.querySelectorAll("[data-register-input]"),
+      );
+      const registerActions = gsap.utils.toArray<HTMLElement>(
+        cardRef.current.querySelectorAll("[data-register-action]"),
+      );
       const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
 
-      timeline
-        .from("[data-register-card]", {
+      if (registerCards.length > 0) {
+        timeline.from(registerCards, {
           y: 32,
           opacity: 0,
           duration: 0.8,
-        })
-        .from(
-          "[data-register-input]",
+        });
+      }
+
+      if (registerInputs.length > 0) {
+        timeline.from(
+          registerInputs,
           {
             y: 16,
             opacity: 0,
@@ -35,9 +49,12 @@ export default function RegisterCard() {
             stagger: 0.1,
           },
           "-=0.45",
-        )
-        .from(
-          "[data-register-action]",
+        );
+      }
+
+      if (registerActions.length > 0) {
+        timeline.from(
+          registerActions,
           {
             y: 10,
             opacity: 0,
@@ -45,6 +62,7 @@ export default function RegisterCard() {
           },
           "-=0.2",
         );
+      }
     }, cardRef);
 
     return () => {

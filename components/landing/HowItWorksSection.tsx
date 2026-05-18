@@ -21,20 +21,24 @@ export default function HowItWorksSection() {
     const section = sectionRef.current;
 
     const ctx = gsap.context(() => {
-      const cards = container.querySelectorAll('[data-step]');
+      const cards = gsap.utils.toArray<HTMLElement>(
+        container.querySelectorAll('[data-step]'),
+      );
 
-      gsap.to(cards, {
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 60%',
-          end: 'center 30%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 1,
-        y: 0,
-        stagger: 0.15,
-        duration: 0.6,
-      });
+      if (cards.length > 0) {
+        gsap.to(cards, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 60%',
+            end: 'center 30%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 1,
+          y: 0,
+          stagger: 0.15,
+          duration: 0.6,
+        });
+      }
     }, section);
 
     return () => ctx.revert();

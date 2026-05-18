@@ -18,12 +18,14 @@ export default function TeamSection(): JSX.Element {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
-      const cards = Array.from(
-        containerRef.current!.querySelectorAll<HTMLElement>(".team-card")
+      if (!containerRef.current) return;
+
+      const cards = gsap.utils.toArray<HTMLElement>(
+        containerRef.current.querySelectorAll("[data-team-card]")
       );
 
-      const avatars = Array.from(
-        containerRef.current!.querySelectorAll<HTMLElement>(".team-avatar")
+      const avatars = gsap.utils.toArray<HTMLElement>(
+        containerRef.current.querySelectorAll("[data-team-avatar]")
       );
 
       if (cards.length) {
@@ -41,16 +43,20 @@ export default function TeamSection(): JSX.Element {
           stagger: 0.12,
           duration: 0.6,
           ease: "power2.out",
-        }).from(
-          avatars,
-          {
-            scale: 0.98,
-            duration: 0.6,
-            ease: "power2.out",
-            stagger: 0.12,
-          },
-          0
-        );
+        });
+
+        if (avatars.length) {
+          tl.from(
+            avatars,
+            {
+              scale: 0.98,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.12,
+            },
+            0
+          );
+        }
       }
     }, containerRef);
 
@@ -59,10 +65,11 @@ export default function TeamSection(): JSX.Element {
 
   const renderCardElement = (member: (typeof teamData)[number]) => (
     <article
-      className="team-card min-w-55 rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-sm transition-transform duration-200 ease-out hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md dark:border-emerald-900/60 dark:bg-slate-900"
+      data-team-card
+      className="min-w-55 rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-sm transition-transform duration-200 ease-out hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md dark:border-emerald-900/60 dark:bg-slate-900"
       aria-label={member.name}
     >
-      <div className="team-avatar mx-auto mb-4 flex h-24 w-24 items-center justify-center">
+      <div data-team-avatar className="mx-auto mb-4 flex h-24 w-24 items-center justify-center">
         <div className="h-24 w-24 overflow-hidden rounded-full">
           {member.image && !member.isPlaceholder ? (
             <Image

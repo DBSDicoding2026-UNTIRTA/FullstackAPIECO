@@ -26,20 +26,24 @@ export default function FinalCtaSection({ ctaLabel, ctaHref }: FinalCtaSectionPr
     const section = sectionRef.current;
 
     const ctx = gsap.context(() => {
-      const elements = content.querySelectorAll('[data-animate]');
+      const elements = gsap.utils.toArray<HTMLElement>(
+        content.querySelectorAll('[data-animate]'),
+      );
 
-      gsap.from(elements, {
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 0,
-        y: 30,
-        stagger: 0.1,
-        duration: 0.7,
-        ease: 'power3.out',
-      });
+      if (elements.length > 0) {
+        gsap.from(elements, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 70%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 0,
+          y: 30,
+          stagger: 0.1,
+          duration: 0.7,
+          ease: 'power3.out',
+        });
+      }
     }, section);
 
     return () => ctx.revert();

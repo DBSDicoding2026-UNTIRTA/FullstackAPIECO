@@ -28,14 +28,24 @@ export default function RegisterHeroText() {
   const heroRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    if (!heroRef.current) return;
+
     const ctx = gsap.context(() => {
-      gsap.from("[data-hero-item]", {
-        y: 18,
-        opacity: 0,
-        duration: 0.65,
-        stagger: 0.12,
-        ease: "power2.out",
-      });
+      if (!heroRef.current) return;
+
+      const heroItems = gsap.utils.toArray<HTMLElement>(
+        heroRef.current.querySelectorAll("[data-hero-item]"),
+      );
+
+      if (heroItems.length > 0) {
+        gsap.from(heroItems, {
+          y: 18,
+          opacity: 0,
+          duration: 0.65,
+          stagger: 0.12,
+          ease: "power2.out",
+        });
+      }
     }, heroRef);
 
     return () => {

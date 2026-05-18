@@ -28,15 +28,21 @@ export default function HeroSection({ ctaLabel, ctaHref }: HeroSectionProps) {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      const items = sectionRef.current?.querySelectorAll('[data-hero-animate]');
+      if (!sectionRef.current) return;
 
-      gsap.from(items ?? [], {
-        opacity: 0,
-        y: 24,
-        stagger: 0.08,
-        duration: 0.8,
-        ease: 'power3.out',
-      });
+      const items = gsap.utils.toArray<HTMLElement>(
+        sectionRef.current.querySelectorAll('[data-hero-animate]'),
+      );
+
+      if (items.length > 0) {
+        gsap.from(items, {
+          opacity: 0,
+          y: 24,
+          stagger: 0.08,
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();

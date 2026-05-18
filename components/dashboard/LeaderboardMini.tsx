@@ -15,11 +15,16 @@ export default function LeaderboardMini({ entries }: LeaderboardMiniProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    if (!sectionRef.current) return;
+
     const ctx = gsap.context(() => {
       if (!sectionRef.current) {
         return;
       }
 
+      const leaderboardItems = gsap.utils.toArray<HTMLElement>(
+        sectionRef.current.querySelectorAll("[data-leaderboard-item]"),
+      );
       const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
 
       timeline.fromTo(
@@ -36,16 +41,18 @@ export default function LeaderboardMini({ entries }: LeaderboardMiniProps) {
         },
       );
 
-      timeline.from(
-        "[data-leaderboard-item]",
-        {
-          opacity: 0,
-          x: 10,
-          duration: 0.35,
-          stagger: 0.08,
-        },
-        "-=0.35",
-      );
+      if (leaderboardItems.length > 0) {
+        timeline.from(
+          leaderboardItems,
+          {
+            opacity: 0,
+            x: 10,
+            duration: 0.35,
+            stagger: 0.08,
+          },
+          "-=0.35",
+        );
+      }
     }, sectionRef);
 
     return () => {

@@ -21,12 +21,17 @@ export default function ChallengeProgress({ items }: ChallengeProgressProps) {
   const barRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
+    if (!sectionRef.current) return;
+
     const ctx = gsap.context(() => {
       const sectionElement = sectionRef.current;
       if (!sectionElement) {
         return;
       }
 
+      const challengeItems = gsap.utils.toArray<HTMLElement>(
+        sectionElement.querySelectorAll("[data-challenge-item]"),
+      );
       const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
 
       timeline.fromTo(
@@ -42,16 +47,18 @@ export default function ChallengeProgress({ items }: ChallengeProgressProps) {
         },
       );
 
-      timeline.from(
-        "[data-challenge-item]",
-        {
-          opacity: 0,
-          y: 14,
-          duration: 0.45,
-          stagger: 0.1,
-        },
-        "-=0.35",
-      );
+      if (challengeItems.length > 0) {
+        timeline.from(
+          challengeItems,
+          {
+            opacity: 0,
+            y: 14,
+            duration: 0.45,
+            stagger: 0.1,
+          },
+          "-=0.35",
+        );
+      }
 
       barRefs.current.forEach((bar, index) => {
         if (!bar) {

@@ -42,25 +42,35 @@ export default function WasteDonutChart({
   const totalCount = items.reduce((sum, item) => sum + item.count, 0);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     const ctx = gsap.context(() => {
+      if (!containerRef.current) return;
+
+      const legendItems = gsap.utils.toArray<HTMLElement>(
+        containerRef.current.querySelectorAll("[data-donut-legend-item]"),
+      );
+
       gsap.fromTo(
         containerRef.current,
         { opacity: 0, y: 24 },
         { opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: "power3.out" },
       );
 
-      gsap.fromTo(
-        ".donut-legend-item",
-        { opacity: 0, x: -12 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.4,
-          delay: 0.7,
-          stagger: 0.08,
-          ease: "power2.out",
-        },
-      );
+      if (legendItems.length > 0) {
+        gsap.fromTo(
+          legendItems,
+          { opacity: 0, x: -12 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.4,
+            delay: 0.7,
+            stagger: 0.08,
+            ease: "power2.out",
+          },
+        );
+      }
     }, containerRef);
 
     return () => {
@@ -171,7 +181,7 @@ export default function WasteDonutChart({
           {/* Legend + bar details */}
           <div className="flex-1 space-y-3">
             {segments.map((seg) => (
-              <div key={seg.type} className="donut-legend-item">
+              <div key={seg.type} data-donut-legend-item>
                 <div className="flex items-center justify-between gap-3 text-sm">
                   <span className="inline-flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-200">
                     <span

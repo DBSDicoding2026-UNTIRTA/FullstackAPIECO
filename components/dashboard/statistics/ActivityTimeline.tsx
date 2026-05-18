@@ -24,10 +24,25 @@ export default function ActivityTimeline({ title, emptyMessage, activities }: Ac
   const containerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     const ctx = gsap.context(() => {
+      if (!containerRef.current) return;
+
+      const timelineItems = gsap.utils.toArray<HTMLElement>(
+        containerRef.current.querySelectorAll("[data-timeline-item]"),
+      );
+      const timelineLine = containerRef.current.querySelector<HTMLElement>("[data-timeline-line]");
+
       gsap.fromTo(containerRef.current, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: "power3.out" });
-      gsap.fromTo(".timeline-item", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.45, delay: 0.6, stagger: 0.08, ease: "power2.out" });
-      gsap.fromTo(".timeline-line", { scaleY: 0 }, { scaleY: 1, duration: 0.8, delay: 0.5, ease: "power2.out", transformOrigin: "top" });
+
+      if (timelineItems.length > 0) {
+        gsap.fromTo(timelineItems, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.45, delay: 0.6, stagger: 0.08, ease: "power2.out" });
+      }
+
+      if (timelineLine) {
+        gsap.fromTo(timelineLine, { scaleY: 0 }, { scaleY: 1, duration: 0.8, delay: 0.5, ease: "power2.out", transformOrigin: "top" });
+      }
     }, containerRef);
     return () => { ctx.revert(); };
   }, []);
@@ -46,7 +61,7 @@ export default function ActivityTimeline({ title, emptyMessage, activities }: Ac
       ) : (
         <div className="relative mt-5">
           {/* Vertical timeline line */}
-          <div className="timeline-line absolute bottom-0 left-5 top-0 w-px bg-gradient-to-b from-emerald-300 via-emerald-200 to-transparent dark:from-emerald-700 dark:via-emerald-900" aria-hidden="true" />
+          <div data-timeline-line className="absolute bottom-0 left-5 top-0 w-px bg-gradient-to-b from-emerald-300 via-emerald-200 to-transparent dark:from-emerald-700 dark:via-emerald-900" aria-hidden="true" />
 
           <div className="space-y-1">
             {activities.map((activity, index) => {
@@ -54,7 +69,7 @@ export default function ActivityTimeline({ title, emptyMessage, activities }: Ac
               const isEven = index % 2 === 0;
 
               return (
-                <article key={activity.id} className={`timeline-item group relative flex items-start gap-4 rounded-2xl p-3 transition-all duration-200 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/10 ${isEven ? "" : ""}`}>
+                <article key={activity.id} data-timeline-item className={`group relative flex items-start gap-4 rounded-2xl p-3 transition-all duration-200 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/10 ${isEven ? "" : ""}`}>
                   {/* Timeline node */}
                   <div className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110 ${
                     isUpload

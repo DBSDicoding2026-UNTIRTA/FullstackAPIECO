@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import {
   ChevronLeft,
@@ -232,10 +233,13 @@ export default function DatasetClient() {
                     <td className="px-6 py-3">
                       <div className="h-10 w-10 overflow-hidden rounded-lg border border-emerald-100 bg-slate-100 dark:border-emerald-900/60 dark:bg-slate-800">
                         {item.imageUrl ? (
-                          <img
+                          <Image
                             src={item.imageUrl}
                             alt={item.result}
+                            width={40}
+                            height={40}
                             className="h-full w-full object-cover"
+                            unoptimized
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">-</div>
@@ -247,10 +251,13 @@ export default function DatasetClient() {
                     <td className="whitespace-nowrap px-6 py-3">
                       <div className="flex items-center gap-2">
                         {item.user.image ? (
-                          <img
+                          <Image
                             src={item.user.image}
                             alt=""
+                            width={28}
+                            height={28}
                             className="h-7 w-7 rounded-full object-cover"
+                            unoptimized
                           />
                         ) : (
                           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
