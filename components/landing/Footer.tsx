@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ExternalLink, Globe, Mail, SendHorizontal } from 'lucide-react';
 import { useSettings } from '@/hooks/use-settings';
 
 export default function Footer() {
@@ -29,10 +30,10 @@ export default function Footer() {
   };
 
   const socialLinks = [
-    { icon: '📱', label: 'Instagram', href: '#' },
-    { icon: '🐦', label: 'Twitter', href: '#' },
-    { icon: '💼', label: 'LinkedIn', href: '#' },
-    { icon: '📧', label: 'Email', href: '#' },
+    { icon: Globe, label: 'Website', href: '#' },
+    { icon: Mail, label: 'Email', href: 'mailto:pilahyuk@example.com' },
+    { icon: SendHorizontal, label: 'Contact', href: '#' },
+    { icon: ExternalLink, label: 'External Link', href: '#' },
   ];
 
   return (
@@ -42,7 +43,7 @@ export default function Footer() {
         <div className="py-16 md:py-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12">
           {/* Brand section */}
           <div className="lg:col-span-1">
-            <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent mb-4 inline-block">
+            <Link href="/" className="mb-4 inline-block bg-linear-to-r from-emerald-400 to-teal-500 bg-clip-text text-2xl font-bold text-transparent">
               Pilah Yuk!!
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -53,10 +54,10 @@ export default function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-emerald-500/20 border border-gray-700 hover:border-emerald-500/50 flex items-center justify-center text-lg transition-all duration-200"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 transition-all duration-200 hover:border-emerald-500/50 hover:bg-emerald-500/20"
                   title={social.label}
                 >
-                  {social.icon}
+                  <social.icon className="h-4 w-4" />
                 </a>
               ))}
             </div>

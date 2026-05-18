@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { JSX, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ExternalLink, Globe, Mail } from 'lucide-react';
 import { teamData } from "@/data/team";
 import { useSettings } from "@/hooks/use-settings";
 
@@ -58,7 +59,7 @@ export default function TeamSection(): JSX.Element {
 
   const renderCardElement = (member: (typeof teamData)[number]) => (
     <article
-      className="team-card min-w-[220px] rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-sm transition-transform duration-200 ease-out hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md dark:border-emerald-900/60 dark:bg-slate-900"
+      className="team-card min-w-55 rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-sm transition-transform duration-200 ease-out hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md dark:border-emerald-900/60 dark:bg-slate-900"
       aria-label={member.name}
     >
       <div className="team-avatar mx-auto mb-4 flex h-24 w-24 items-center justify-center">
@@ -105,13 +106,34 @@ export default function TeamSection(): JSX.Element {
       <p className="mt-1 text-sm text-emerald-600 dark:text-emerald-300">
         {member.role}
       </p>
+
+      <div className="mt-4 flex items-center justify-center gap-2">
+        {[
+          { icon: ExternalLink, label: 'Profile' },
+          { icon: Globe, label: 'Website' },
+          { icon: Mail, label: 'Email' },
+        ].map((social) => {
+          const Icon = social.icon;
+
+          return (
+            <a
+              key={social.label}
+              href="#"
+              aria-label={social.label}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-100 text-slate-500 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:text-emerald-700 dark:border-emerald-900/40 dark:text-slate-300 dark:hover:text-emerald-300"
+            >
+              <Icon className="h-4 w-4" />
+            </a>
+          );
+        })}
+      </div>
     </article>
   );
 
   return (
     <section className="bg-white dark:bg-slate-950">
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
-        <div className="rounded-3xl bg-gradient-to-b from-emerald-50 to-white p-8 dark:from-emerald-950/40 dark:to-slate-950">
+        <div className="rounded-3xl bg-linear-to-b from-emerald-50 to-white p-8 dark:from-emerald-950/40 dark:to-slate-950">
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-semibold text-emerald-900 sm:text-3xl dark:text-emerald-100">
               {t("landing.team.title")}

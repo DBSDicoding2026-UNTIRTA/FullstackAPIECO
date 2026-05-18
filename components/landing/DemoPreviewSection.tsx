@@ -3,6 +3,15 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  ArrowRight,
+  BarChart3,
+  Bot,
+  Leaf,
+  Trophy,
+  UploadCloud,
+  Zap,
+} from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -60,7 +69,7 @@ export default function DemoPreviewSection() {
   return (
     <section
       ref={sectionRef}
-      className="bg-gradient-to-b from-white via-emerald-50/40 to-white px-4 py-20 sm:px-6 md:py-28 lg:px-8"
+      className="bg-linear-to-b from-white via-emerald-50/40 to-white px-4 py-20 sm:px-6 md:py-28 lg:px-8"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
@@ -81,28 +90,31 @@ export default function DemoPreviewSection() {
             <div className="space-y-4">
               {[
                 {
-                  icon: "🗑️",
+                  icon: UploadCloud,
                   title: "Upload Foto Sampah",
                   description:
                     "Pengguna cukup mengunggah gambar sampah yang ingin diklasifikasikan.",
                 },
                 {
-                  icon: "⚡",
+                  icon: Bot,
                   title: "AI Mendeteksi Jenis Sampah",
                   description:
                     "Model AI akan mengenali kategori seperti plastik, kertas, kaca, logam, atau organik.",
                 },
                 {
-                  icon: "🏆",
+                  icon: Trophy,
                   title: "Dapatkan Poin dan Badge",
                   description:
                     "Setiap aksi pemilahan akan menambah poin dan progress pengguna.",
                 },
-              ].map((item) => (
+              ].map((item) => {
+                const Icon = item.icon;
+
+                return (
                 <div key={item.title} className="flex items-start gap-4">
                   <div className="shrink-0">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-xl">
-                      {item.icon}
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+                      <Icon className="h-5 w-5" />
                     </div>
                   </div>
                   <div>
@@ -114,22 +126,24 @@ export default function DemoPreviewSection() {
                     </p>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
-            <button className="mt-4 w-fit rounded-xl bg-gradient-to-r from-emerald-500 to-lime-500 px-8 py-3 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/30 active:scale-95">
+            <button className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl bg-linear-to-r from-emerald-500 to-lime-500 px-8 py-3 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/30 active:scale-95">
               Coba Deteksi Sampah
+              <ArrowRight className="h-4 w-4" />
             </button>
           </div>
 
           <div ref={mockupRef} className="relative">
             <div className="relative mx-auto aspect-square w-full max-w-md">
-              <div className="absolute -inset-8 rounded-3xl bg-gradient-to-br from-emerald-200 to-lime-200 opacity-30 blur-2xl" />
+              <div className="absolute -inset-8 rounded-3xl bg-linear-to-br from-emerald-200 to-lime-200 opacity-30 blur-2xl" />
 
               <div className="relative overflow-hidden rounded-3xl border border-emerald-200 bg-white p-6 shadow-2xl shadow-emerald-900/10">
                 <div className="mb-6 flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-lime-500 text-xl">
-                    ♻️
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-br from-emerald-400 to-lime-500 text-white">
+                    <Leaf className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="font-bold text-slate-950">Pilah Yuk!!</p>
@@ -138,7 +152,7 @@ export default function DemoPreviewSection() {
                 </div>
 
                 <div className="mb-6 flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/50 p-8">
-                  <span className="text-5xl">🗑️</span>
+                  <UploadCloud className="h-12 w-12 text-emerald-600" />
                   <p className="text-center text-sm font-medium text-slate-600">
                     Upload foto sampahmu
                   </p>
@@ -150,7 +164,7 @@ export default function DemoPreviewSection() {
                     title="Plastik"
                     accuracy="92% Akurat"
                     points="+10"
-                    icon="🍾"
+                    icon={Zap}
                     color="emerald"
                     widthClass="w-11/12"
                   />
@@ -159,7 +173,7 @@ export default function DemoPreviewSection() {
                     title="Kertas"
                     accuracy="88% Akurat"
                     points="+8"
-                    icon="📰"
+                    icon={BarChart3}
                     color="blue"
                     widthClass="w-10/12"
                   />
@@ -188,7 +202,7 @@ type ResultCardProps = {
   title: string;
   accuracy: string;
   points: string;
-  icon: string;
+  icon: typeof Zap;
   color: "emerald" | "blue";
   widthClass: string;
 };
@@ -216,6 +230,8 @@ function ResultCard({
           bar: "bg-blue-500",
         };
 
+        const Icon = icon;
+
   return (
     <div className={`rounded-xl border p-4 ${colorClass.card}`}>
       <div className="mb-2 flex items-start justify-between">
@@ -225,7 +241,7 @@ function ResultCard({
             {accuracy}
           </p>
         </div>
-        <span className="text-2xl">{icon}</span>
+        <Icon className="h-6 w-6 text-slate-700" />
       </div>
 
       <p className="mb-3 text-xs text-slate-600">

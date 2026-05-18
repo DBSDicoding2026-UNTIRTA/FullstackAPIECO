@@ -69,7 +69,6 @@ export default function DatasetClient() {
   const [searchInput, setSearchInput] = useState("");
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams();
@@ -82,18 +81,23 @@ export default function DatasetClient() {
       const json: DatasetResponse = await res.json();
       setData(json);
     } catch {
-      setError(t("admin.dataset.error" as never) || "Gagal memuat dataset.");
+      setError("Gagal memuat dataset.");
     } finally {
       setLoading(false);
     }
   }, [page, filterType, search]);
 
   useEffect(() => {
-    fetchData();
+    const timeoutId = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [fetchData]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setSearch(searchInput);
     setPage(1);
   };
@@ -151,6 +155,7 @@ export default function DatasetClient() {
         <select
           value={filterType}
           onChange={(e) => {
+            setLoading(true);
             setFilterType(e.target.value);
             setPage(1);
           }}
@@ -306,7 +311,10 @@ export default function DatasetClient() {
                 <button
                   type="button"
                   disabled={page <= 1}
-                  onClick={() => setPage((p) => p - 1)}
+                    onClick={() => {
+                      setLoading(true);
+                      setPage((p) => p - 1);
+                    }}
                   className="rounded-lg p-1.5 text-slate-500 transition hover:bg-emerald-50 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-emerald-950/40"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -314,7 +322,10 @@ export default function DatasetClient() {
                 <button
                   type="button"
                   disabled={page >= (data?.totalPages ?? 1)}
-                  onClick={() => setPage((p) => p + 1)}
+                    onClick={() => {
+                      setLoading(true);
+                      setPage((p) => p + 1);
+                    }}
                   className="rounded-lg p-1.5 text-slate-500 transition hover:bg-emerald-50 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-emerald-950/40"
                 >
                   <ChevronRight className="h-4 w-4" />

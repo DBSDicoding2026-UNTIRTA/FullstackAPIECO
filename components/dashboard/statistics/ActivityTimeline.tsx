@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { CalendarDays, CheckCircle2, ImageIcon, BrainCircuit, XCircle } from "lucide-react";
+import { CalendarDays, CheckCircle2, ImageIcon, XCircle } from "lucide-react";
 
 interface ActivityItem {
   readonly id: string;

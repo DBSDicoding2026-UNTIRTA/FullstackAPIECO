@@ -179,7 +179,7 @@ export default function AIAnalystClient() {
     } finally {
       setHistoryLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -238,7 +238,7 @@ export default function AIAnalystClient() {
       setResult(null);
       setPreviewFromFile(file);
     },
-    [setPreviewFromFile, stopCamera]
+    [setPreviewFromFile, stopCamera, t]
   );
 
   const startCamera = useCallback(async () => {
@@ -266,7 +266,7 @@ export default function AIAnalystClient() {
           : t("ai.error.cameraAccess")
       );
     }
-  }, []);
+  }, [t]);
 
   const capturePhoto = useCallback(() => {
     const video = videoRef.current;
@@ -299,7 +299,7 @@ export default function AIAnalystClient() {
 
       handleFileSelect(capturedFile);
     }, "image/jpeg", 0.92);
-  }, [handleFileSelect]);
+  }, [handleFileSelect, t]);
 
   const handleAnalyze = useCallback(async () => {
     if (!selectedFile) {
@@ -351,7 +351,7 @@ export default function AIAnalystClient() {
     } finally {
       setIsLoading(false);
     }
-  }, [loadHistory, notify, selectedFile]);
+  }, [loadHistory, notify, selectedFile, t]);
 
   const handleReset = useCallback(() => {
     setSelectedFile(null);

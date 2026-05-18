@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { BarChart3, Trophy } from 'lucide-react';
 import { leaderboardUsers } from '@/data/landing';
 import { useSettings } from '@/hooks/use-settings';
 
@@ -41,6 +42,7 @@ export default function LeaderboardPreview() {
   return (
     <section
       ref={sectionRef}
+      id="leaderboard"
       className="bg-white px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:bg-slate-950"
     >
       <div className="max-w-4xl mx-auto">
@@ -57,7 +59,7 @@ export default function LeaderboardPreview() {
         {/* Leaderboard Card */}
         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 md:px-8 py-6">
+          <div className="bg-linear-to-r from-emerald-500 to-teal-600 px-6 py-6 md:px-8">
             <h3 className="text-xl font-bold text-white">{t('landing.leaderboard.cardTitle')}</h3>
             <p className="mt-1 text-sm text-emerald-100">
               {t('landing.leaderboard.cardSubtitle')}
@@ -74,29 +76,34 @@ export default function LeaderboardPreview() {
               >
                 <div className="flex items-center justify-between gap-4">
                   {/* Rank and info */}
-                  <div className="flex items-center gap-4 flex-1">
+                  <div className="flex flex-1 items-center gap-4">
                     {/* Rank badge */}
-                    <div className="relative w-12 h-12 flex-shrink-0">
+                    <div className="relative h-12 w-12 shrink-0">
                       {user.rank === 1 && (
                         <div className="absolute inset-0 animate-pulse bg-yellow-300 rounded-full blur-md opacity-50" />
                       )}
                       <div
                         className={`relative w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-lg ${
                           user.rank === 1
-                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                            ? 'bg-linear-to-br from-yellow-400 to-yellow-500'
                             : user.rank === 2
-                              ? 'bg-gradient-to-br from-gray-400 to-gray-500'
-                              : 'bg-gradient-to-br from-orange-400 to-orange-500'
+                              ? 'bg-linear-to-br from-gray-400 to-gray-500'
+                              : 'bg-linear-to-br from-orange-400 to-orange-500'
                         }`}
                       >
-                        {user.rank === 1 ? '👑' : `#${user.rank}`}
+                        {user.rank === 1 ? <Trophy className="h-5 w-5" /> : `#${user.rank}`}
                       </div>
                     </div>
 
                     {/* User info */}
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-200 to-teal-200 flex items-center justify-center text-xl">
-                        {user.avatar}
+                    <div className="flex flex-1 items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-emerald-200 to-teal-200 text-sm font-semibold text-emerald-800 dark:from-emerald-900/30 dark:to-teal-900/30 dark:text-emerald-200">
+                        {user.name
+                          .split(' ')
+                          .map((part) => part[0])
+                          .slice(0, 2)
+                          .join('')
+                          .toUpperCase()}
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900 dark:text-white">{user.name}</p>
@@ -112,7 +119,7 @@ export default function LeaderboardPreview() {
                   </div>
 
                   {/* Points */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex shrink-0 items-center gap-2">
                     <span className="text-lg font-bold text-emerald-600">{user.points}</span>
                     <span className="text-sm text-gray-500 dark:text-slate-400">
                       {t('landing.leaderboard.pointsUnit')}
@@ -121,9 +128,9 @@ export default function LeaderboardPreview() {
                 </div>
 
                 {/* Progress bar */}
-                <div className="mt-3 ml-16 h-1.5 rounded-full bg-gray-200 overflow-hidden dark:bg-slate-800">
+                <div className="mt-3 ml-16 h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-slate-800">
                   <div
-                    className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"
+                    className="h-full rounded-full bg-linear-to-r from-emerald-400 to-teal-500"
                     style={{ width: `${(user.points / 3250) * 100}%` }}
                   />
                 </div>
@@ -145,7 +152,7 @@ export default function LeaderboardPreview() {
         {/* Fun fact */}
         <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-3 rounded-full border border-emerald-200 bg-emerald-50 px-6 py-3 dark:border-emerald-800 dark:bg-emerald-950/40">
-            <span className="text-2xl">🎯</span>
+            <BarChart3 className="h-5 w-5 text-emerald-700 dark:text-emerald-200" />
             <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-200">
               {t('landing.leaderboard.funFact')}
             </p>

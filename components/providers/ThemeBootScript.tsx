@@ -1,5 +1,3 @@
-import Script from "next/script";
-
 import type { ThemePreference } from "@/types/settings";
 
 interface ThemeBootScriptProps {
@@ -22,6 +20,6 @@ export default function ThemeBootScript({ theme }: ThemeBootScriptProps) {
     })();
   `;
 
-  return <Script id="theme-boot-script" strategy="beforeInteractive">{code}</Script>;
+  return <script id="theme-boot-script" dangerouslySetInnerHTML={{ __html: code }} />;
 }
 

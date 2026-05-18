@@ -1,15 +1,22 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { ArrowRight, Leaf, ShieldCheck, Sparkles, Trophy, Users } from 'lucide-react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSettings } from '@/hooks/use-settings';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function FinalCtaSection() {
+type FinalCtaSectionProps = {
+  readonly ctaLabel: string;
+  readonly ctaHref: string;
+};
+
+export default function FinalCtaSection({ ctaLabel, ctaHref }: FinalCtaSectionProps) {
   const { t } = useSettings();
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,13 +31,14 @@ export default function FinalCtaSection() {
       gsap.from(elements, {
         scrollTrigger: {
           trigger: section,
-          start: 'top 60%',
+          start: 'top 70%',
           toggleActions: 'play none none reverse',
         },
         opacity: 0,
         y: 30,
         stagger: 0.1,
-        duration: 0.6,
+        duration: 0.7,
+        ease: 'power3.out',
       });
     }, section);
 
@@ -41,117 +49,150 @@ export default function FinalCtaSection() {
     <section
       ref={sectionRef}
       id="cta"
-      className="bg-gradient-to-b from-white to-emerald-50 px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:from-slate-950 dark:to-slate-900"
+      className="relative overflow-hidden px-4 py-20 sm:px-6 md:py-28 lg:px-8"
     >
-      <div className="max-w-4xl mx-auto text-center">
-        {/* Background decorations */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-10 left-1/4 h-64 w-64 animate-pulse rounded-full bg-emerald-200 opacity-20 blur-3xl mix-blend-multiply dark:bg-emerald-500/10" />
-          <div className="absolute bottom-10 right-1/4 h-64 w-64 animate-pulse rounded-full bg-teal-200 opacity-20 blur-3xl mix-blend-multiply dark:bg-teal-500/10" />
-        </div>
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-emerald-300/25 blur-3xl dark:bg-emerald-500/10" />
+        <div className="absolute -right-16 bottom-10 h-80 w-80 rounded-full bg-lime-300/20 blur-3xl dark:bg-lime-500/10" />
+      </div>
 
-        <div ref={contentRef} className="relative z-10">
-          {/* Floating icons animation container */}
-          <div className="mb-8 md:mb-12 flex justify-center gap-4 flex-wrap">
-            {['♻️', '🌍', '🌱'].map((icon, idx) => (
-              <div
-                key={icon}
-                data-animate=""
-                className="text-3xl md:text-4xl animate-bounce"
-                style={{ animationDelay: `${idx * 0.2}s` }}
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div ref={contentRef} className="space-y-6">
+            <div data-animate className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm backdrop-blur dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200">
+              <Sparkles className="h-4 w-4" />
+              <span>Ready to launch</span>
+            </div>
+
+            <h2
+              data-animate
+              className="max-w-2xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl dark:text-white"
+            >
+              {t('landing.final.title')}{' '}
+              <span className="bg-linear-to-r from-emerald-600 to-lime-500 bg-clip-text text-transparent">
+                {t('landing.final.titleAccent')}
+              </span>
+            </h2>
+
+            <p data-animate className="max-w-2xl text-base leading-8 text-slate-600 sm:text-lg dark:text-slate-300">
+              {t('landing.final.subtitle')}
+            </p>
+
+            <div data-animate className="grid gap-3 sm:grid-cols-3">
+              {[
+                { icon: ShieldCheck, title: 'Trusted flow', text: 'No clutter, no friction' },
+                { icon: Users, title: 'Community loop', text: 'Rank alongside peers' },
+                { icon: Trophy, title: 'Impact rewards', text: 'Points that feel tangible' },
+              ].map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <div key={item.title} className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-900/60">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-950 dark:text-white">{item.title}</p>
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.text}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div data-animate className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href={ctaHref}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white shadow-[0_20px_40px_rgba(15,23,42,0.16)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-600 hover:shadow-emerald-500/20 dark:bg-white dark:text-slate-950 dark:hover:bg-emerald-400"
               >
-                {icon}
+                <span>{ctaLabel}</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="#how-it-works"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white/80 px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:text-emerald-700 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:border-emerald-900/60 dark:hover:text-emerald-300"
+              >
+                {t('landing.final.secondaryCta')}
+              </Link>
+            </div>
+
+            <div data-animate className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+              <div className="inline-flex items-center gap-2">
+                <CheckBadge />
+                <span>{t('landing.final.trustUsers')}</span>
               </div>
-            ))}
-          </div>
-
-          {/* Content */}
-          <h2
-            data-animate=""
-            className="mb-6 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white"
-          >
-            {t('landing.final.title')}{' '}
-            <span className="bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent">
-              {t('landing.final.titleAccent')}
-            </span>
-          </h2>
-
-          <p
-            data-animate=""
-            className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-slate-300"
-          >
-            {t('landing.final.subtitle')}
-          </p>
-
-          {/* Benefits */}
-          <div
-            data-animate=""
-            className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6"
-          >
-            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-emerald-200 hover:shadow-md md:p-6 dark:border-slate-800 dark:bg-slate-900">
-              <span className="text-3xl md:text-4xl mb-3 block">🎁</span>
-              <p className="mb-1 font-semibold text-gray-900 dark:text-white">
-                {t('landing.final.benefit1.title')}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-slate-300">
-                {t('landing.final.benefit1.description')}
-              </p>
-            </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-emerald-200 hover:shadow-md md:p-6 dark:border-slate-800 dark:bg-slate-900">
-              <span className="text-3xl md:text-4xl mb-3 block">⚡</span>
-              <p className="mb-1 font-semibold text-gray-900 dark:text-white">
-                {t('landing.final.benefit2.title')}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-slate-300">
-                {t('landing.final.benefit2.description')}
-              </p>
-            </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-emerald-200 hover:shadow-md md:p-6 dark:border-slate-800 dark:bg-slate-900">
-              <span className="text-3xl md:text-4xl mb-3 block">🌟</span>
-              <p className="mb-1 font-semibold text-gray-900 dark:text-white">
-                {t('landing.final.benefit3.title')}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-slate-300">
-                {t('landing.final.benefit3.description')}
-              </p>
+              <div className="hidden h-1 w-1 rounded-full bg-slate-300 sm:block dark:bg-slate-600" />
+              <div className="inline-flex items-center gap-2">
+                <CheckBadge />
+                <span>{t('landing.final.trustRating')}</span>
+              </div>
+              <div className="hidden h-1 w-1 rounded-full bg-slate-300 sm:block dark:bg-slate-600" />
+              <div className="inline-flex items-center gap-2">
+                <CheckBadge />
+                <span>{t('landing.final.trustSecurity')}</span>
+              </div>
             </div>
           </div>
 
-          {/* CTA Buttons */}
-          <div
-            data-animate=""
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <button className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/40 active:scale-95 md:px-10">
-              {t('auth.googleContinue')}
-            </button>
-            <button className="rounded-xl border-2 border-emerald-500 px-8 py-4 text-lg font-semibold text-emerald-600 transition-all duration-300 hover:scale-105 hover:bg-emerald-50 active:scale-95 md:px-10 dark:border-emerald-400 dark:text-emerald-200 dark:hover:bg-emerald-950/30">
-              {t('landing.final.secondaryCta')}
-            </button>
-          </div>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-0 -z-10">
+              <div className="absolute left-8 top-8 h-56 w-56 rounded-full bg-emerald-300/20 blur-3xl dark:bg-emerald-500/10" />
+              <div className="absolute right-8 bottom-8 h-52 w-52 rounded-full bg-lime-300/20 blur-3xl dark:bg-lime-500/10" />
+            </div>
 
-          {/* Trust badge */}
-          <div
-            data-animate=""
-            className="mt-12 flex flex-col items-center justify-center gap-6 text-sm text-gray-600 sm:flex-row dark:text-slate-300"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">✅</span>
-              <p>{t('landing.final.trustUsers')}</p>
-            </div>
-            <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-400" />
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">⭐</span>
-              <p>{t('landing.final.trustRating')}</p>
-            </div>
-            <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-400" />
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🔐</span>
-              <p>{t('landing.final.trustSecurity')}</p>
+            <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/70 md:p-6">
+              <div className="grid gap-4 rounded-[1.5rem] border border-emerald-100 bg-linear-to-br from-white via-emerald-50/60 to-white p-5 dark:border-emerald-900/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Quick start</p>
+                    <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">Start in under a minute</p>
+                  </div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+                    <Leaf className="h-5 w-5" />
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {[
+                    'Open the dashboard or sign in.',
+                    'Upload one image of sorted waste.',
+                    'Get AI classification and rewards.',
+                    'Track your rank and impact.'
+                  ].map((text, index) => (
+                    <div key={text} className="rounded-2xl border border-white/80 bg-white/90 p-4 shadow-sm dark:border-white/10 dark:bg-slate-950/60">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+                          0{index + 1}
+                        </div>
+                        <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {[
+                    { label: 'AI scan', value: '92%' },
+                    { label: 'Points', value: '+10' },
+                    { label: 'Rank gain', value: 'Live' },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-2xl border border-white/80 bg-white/90 p-4 shadow-sm dark:border-white/10 dark:bg-slate-950/60">
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{item.label}</p>
+                      <p className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
   );
+}
+
+function CheckBadge() {
+  return <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />;
 }

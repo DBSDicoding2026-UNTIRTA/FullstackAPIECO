@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { BarChart3, Leaf, Recycle, Users } from 'lucide-react';
 import { impactStats } from '@/data/landing';
 import { useSettings } from '@/hooks/use-settings';
 
@@ -50,7 +51,7 @@ export default function ImpactStatsSection() {
     <section
       ref={sectionRef}
       id="stats"
-      className="bg-gradient-to-b from-white to-purple-50/30 px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:from-slate-950 dark:to-slate-900"
+      className="bg-linear-to-b from-white to-purple-50/30 px-4 py-20 sm:px-6 md:py-32 lg:px-8 dark:from-slate-950 dark:to-slate-900"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -65,23 +66,28 @@ export default function ImpactStatsSection() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {impactStats.map((stat) => (
+          {impactStats.map((stat, index) => {
+            const Icon = [Recycle, Leaf, Users, BarChart3][index] ?? BarChart3;
+
+            return (
             <div
               key={stat.id}
               className="group relative cursor-pointer rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
             >
               {/* Background gradient */}
               <div
-                className={`absolute inset-0 opacity-0 group-hover:opacity-5 bg-gradient-to-br ${stat.color} transition-opacity duration-300`}
+                className={`absolute inset-0 opacity-0 bg-linear-to-br ${stat.color} transition-opacity duration-300 group-hover:opacity-5`}
               />
 
               {/* Icon */}
-              <div className="text-5xl mb-6">{stat.icon}</div>
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+                <Icon className="h-6 w-6" />
+              </div>
 
               {/* Number and label */}
               <div className="relative z-10">
                 <div className="mb-2">
-                  <span className={`text-4xl sm:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+                  <span className={`text-4xl sm:text-5xl font-bold bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}>
                     <CountUp target={stat.value} triggerRef={sectionRef} />
                   </span>
                   <span className="ml-1 text-2xl font-bold text-gray-600 dark:text-slate-300">
@@ -94,9 +100,10 @@ export default function ImpactStatsSection() {
               </div>
 
               {/* Bottom accent */}
-              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`} />
+              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r ${stat.color} transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100`} />
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Bottom message */}
@@ -105,7 +112,7 @@ export default function ImpactStatsSection() {
             {t('landing.stats.footerMessage')}
           </p>
           <div className="inline-flex items-center gap-3 rounded-full border border-emerald-200 bg-emerald-50 px-6 py-3 dark:border-emerald-800 dark:bg-emerald-950/40">
-            <span className="text-2xl">♻️</span>
+            <Recycle className="h-5 w-5 text-emerald-700 dark:text-emerald-200" />
             <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-200">
               {t('landing.stats.joinCommunity')}
             </p>

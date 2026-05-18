@@ -6,8 +6,6 @@ import { useState } from "react";
 import {
   BarChart3,
   Bot,
-  ChevronLeft,
-  ChevronRight,
   Database,
   FileQuestion,
   LayoutDashboard,

@@ -93,7 +93,7 @@ export default function ModelMonitoringClient() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (

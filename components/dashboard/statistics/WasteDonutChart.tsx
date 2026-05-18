@@ -68,22 +68,36 @@ export default function WasteDonutChart({
     };
   }, []);
 
-  // Calculate donut segments
-  let accumulatedOffset = 0;
-  const segments = items.map((item, index) => {
-    const dashLength = (item.percent / 100) * CIRCUMFERENCE;
-    const dashGap = CIRCUMFERENCE - dashLength;
-    const offset = accumulatedOffset;
-    accumulatedOffset += dashLength;
+  const segments = items.reduce<
+    Array<
+      WasteItem & {
+        readonly color: (typeof DONUT_COLORS)[number];
+        readonly dashArray: string;
+        readonly dashOffset: number;
+        readonly delay: number;
+      }
+    >
+  >(
+    (acc, item, index) => {
+      const dashLength = (item.percent / 100) * CIRCUMFERENCE;
+      const dashGap = CIRCUMFERENCE - dashLength;
+      const offset = acc.reduce(
+        (sum, segment) => sum + (segment.percent / 100) * CIRCUMFERENCE,
+        0,
+      );
 
-    return {
-      ...item,
-      color: DONUT_COLORS[index % DONUT_COLORS.length],
-      dashArray: `${dashLength} ${dashGap}`,
-      dashOffset: -offset,
-      delay: index * 0.15,
-    };
-  });
+      acc.push({
+        ...item,
+        color: DONUT_COLORS[index % DONUT_COLORS.length],
+        dashArray: `${dashLength} ${dashGap}`,
+        dashOffset: -offset,
+        delay: index * 0.15,
+      });
+
+      return acc;
+    },
+    [],
+  );
 
   return (
     <article

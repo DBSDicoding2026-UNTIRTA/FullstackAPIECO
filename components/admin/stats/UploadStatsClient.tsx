@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   BarChart3,
@@ -92,7 +93,7 @@ export default function UploadStatsClient() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
@@ -290,9 +291,11 @@ export default function UploadStatsClient() {
                   <td className="whitespace-nowrap px-6 py-3">
                     <div className="flex items-center gap-2">
                       {r.user.image ? (
-                        <img
+                        <Image
                           src={r.user.image}
                           alt={r.user.name ?? ""}
+                          width={28}
+                          height={28}
                           className="h-7 w-7 rounded-full object-cover"
                         />
                       ) : (
