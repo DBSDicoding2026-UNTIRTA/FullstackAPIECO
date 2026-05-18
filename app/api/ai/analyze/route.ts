@@ -40,11 +40,47 @@ function getAiModelUrl() {
 function formatWasteLabel(label: string) {
   const normalized = label.trim().toLowerCase();
 
-  if (normalized.includes("plastik")) return "Plastik";
-  if (normalized.includes("kertas")) return "Kertas";
-  if (normalized.includes("kaca")) return "Kaca";
-  if (normalized.includes("logam")) return "Logam";
-  return "Organik";
+  if (
+    normalized.includes("clothes") ||
+    normalized.includes("cloth") ||
+    normalized.includes("clothing") ||
+    normalized.includes("textile") ||
+    normalized.includes("fabric") ||
+    normalized.includes("pakaian") ||
+    normalized.includes("kain") ||
+    normalized.includes("baju")
+  ) {
+    return "Pakaian / Kain";
+  }
+
+  if (normalized.includes("plastic") || normalized.includes("plastik")) {
+    return "Plastik";
+  }
+
+  if (normalized.includes("paper") || normalized.includes("kertas")) {
+    return "Kertas";
+  }
+
+  if (normalized.includes("glass") || normalized.includes("kaca")) {
+    return "Kaca";
+  }
+
+  if (normalized.includes("metal") || normalized.includes("logam")) {
+    return "Logam";
+  }
+
+  if (
+    normalized.includes("organic") ||
+    normalized.includes("organik") ||
+    normalized.includes("food") ||
+    normalized.includes("makanan") ||
+    normalized.includes("daun") ||
+    normalized.includes("sisa")
+  ) {
+    return "Organik";
+  }
+
+  return "Tidak Dikenali";
 }
 
 function readString(value: unknown) {

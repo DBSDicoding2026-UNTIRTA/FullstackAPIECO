@@ -20,7 +20,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppNotifications } from "@/hooks/use-app-notifications";
 import { useSettings } from "@/hooks/use-settings";
 
-type WasteLabel = "plastik" | "kertas" | "kaca" | "logam" | "organik";
+type WasteLabel =
+  | "plastik"
+  | "kertas"
+  | "kaca"
+  | "logam"
+  | "organik"
+  | "clothes";
 
 interface AIAnalysisHistoryItem {
   id: string;
@@ -39,10 +45,39 @@ interface AIAnalysisState {
 function normalizeWasteLabel(value: string): WasteLabel {
   const normalized = value.trim().toLowerCase();
 
-  if (normalized.includes("plastik")) return "plastik";
-  if (normalized.includes("kertas")) return "kertas";
-  if (normalized.includes("kaca")) return "kaca";
-  if (normalized.includes("logam")) return "logam";
+  if (
+    normalized.includes("clothes") ||
+    normalized.includes("cloth") ||
+    normalized.includes("clothing") ||
+    normalized.includes("textile") ||
+    normalized.includes("fabric") ||
+    normalized.includes("pakaian") ||
+    normalized.includes("kain") ||
+    normalized.includes("baju")
+  ) {
+    return "clothes";
+  }
+
+  if (normalized.includes("plastic") || normalized.includes("plastik")) {
+    return "plastik";
+  }
+
+  if (normalized.includes("paper") || normalized.includes("kertas")) {
+    return "kertas";
+  }
+
+  if (normalized.includes("glass") || normalized.includes("kaca")) {
+    return "kaca";
+  }
+
+  if (normalized.includes("metal") || normalized.includes("logam")) {
+    return "logam";
+  }
+
+  if (normalized.includes("organic") || normalized.includes("organik")) {
+    return "organik";
+  }
+
   return "organik";
 }
 
@@ -83,6 +118,7 @@ export default function AIAnalystClient() {
 
   const wasteLabels = useMemo(
     () => ({
+      clothes: "Pakaian / Kain",
       plastik: t("waste.plastic"),
       kertas: t("waste.paper"),
       kaca: t("waste.glass"),
@@ -94,6 +130,15 @@ export default function AIAnalystClient() {
 
   const wasteGuides = useMemo(
     () => ({
+      clothes: {
+        uses: [
+          "Dapat didonasikan jika masih layak pakai.",
+          "Dapat didaur ulang menjadi kain lap atau produk tekstil baru.",
+          "Pisahkan pakaian bersih dan kering dari sampah basah.",
+        ],  
+        summary:
+          "Sampah pakaian atau kain termasuk limbah tekstil. Jika masih layak, sebaiknya digunakan ulang atau didonasikan.",
+      },
       plastik: {
         uses: [
           t("ai.guide.plastic.use1"),
