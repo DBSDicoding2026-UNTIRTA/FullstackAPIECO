@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import DashboardAnimatedWrapper from "@/components/dashboard/DashboardAnimatedWrapper";
 import DashboardShell from "../../components/dashboard/DashboardShell";
 import BadgeCard from "@/components/dashboard/BadgeCard";
 import ChallengeProgress from "@/components/dashboard/ChallengeProgress";
@@ -50,34 +51,55 @@ export default async function DashboardPage() {
       <DashboardShell>
         <AppNavbar user={navbarUser} />
 
-        <Container className="relative z-10 space-y-6 py-6 sm:py-8 lg:space-y-7">
-          <DashboardHeader user={dashboardUser} />
-
-          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((item, index) => (
-              <StatCard key={item.id} item={item} index={index} />
-            ))}
-          </section>
-
-          <section className="grid gap-4 xl:grid-cols-3">
-            <div className="space-y-4 lg:col-span-2">
-              <UploadCard />
-              <ChallengeProgress items={challenges} />
+        <DashboardAnimatedWrapper>
+          <Container className="relative z-10 space-y-5 py-6 sm:py-8 lg:space-y-6">
+            <div data-dashboard-animate>
+              <DashboardHeader user={dashboardUser} />
             </div>
-            <LeaderboardMini entries={leaderboard} />
-          </section>
 
-          <section className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-[0_14px_34px_-24px_rgba(16,185,129,0.45)] sm:p-6 dark:border-emerald-900/60 dark:bg-slate-900">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              {t("dashboard.badgesTitle")}
-            </h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {badges.map((badge, index) => (
-                <BadgeCard key={badge.id} badge={badge} index={index} />
+            <section data-dashboard-animate className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {stats.map((item, index) => (
+                <StatCard key={item.id} item={item} index={index} />
               ))}
-            </div>
-          </section>
-        </Container>
+            </section>
+
+            <section className="grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.95fr)]">
+              <div className="space-y-5">
+                <div data-dashboard-animate>
+                  <UploadCard />
+                </div>
+                <div data-dashboard-animate>
+                  <ChallengeProgress items={challenges} />
+                </div>
+              </div>
+              <div data-dashboard-animate>
+                <LeaderboardMini entries={leaderboard} />
+              </div>
+            </section>
+
+            <section
+              data-dashboard-animate
+              className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-base font-semibold text-slate-950 dark:text-white">
+                    {t("dashboard.badgesTitle")}
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    {t("dashboard.ecoProgress")}
+                  </p>
+                </div>
+                <div className="h-px flex-1 bg-linear-to-r from-emerald-200 to-transparent dark:from-emerald-900" />
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {badges.map((badge, index) => (
+                  <BadgeCard key={badge.id} badge={badge} index={index} />
+                ))}
+              </div>
+            </section>
+          </Container>
+        </DashboardAnimatedWrapper>
       </DashboardShell>
     </AppShell>
   );

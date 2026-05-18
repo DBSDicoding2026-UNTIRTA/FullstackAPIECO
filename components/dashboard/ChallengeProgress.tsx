@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { CheckCircle2, Target, TrendingUp, type LucideIcon } from "lucide-react";
 
 import { useSettings } from "@/hooks/use-settings";
 import type { ChallengeItem } from "@/types";
@@ -15,6 +16,12 @@ function getProgressPercentage(current: number, target: number): number {
   return Math.min(100, percentage);
 }
 
+const challengeIconMap: Record<string, LucideIcon> = {
+  "plastic-10": Target,
+  "daily-streak-7": CheckCircle2,
+  "points-500": TrendingUp,
+};
+
 export default function ChallengeProgress({ items }: ChallengeProgressProps) {
   const { t } = useSettings();
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -27,37 +34,6 @@ export default function ChallengeProgress({ items }: ChallengeProgressProps) {
       const sectionElement = sectionRef.current;
       if (!sectionElement) {
         return;
-      }
-
-      const challengeItems = gsap.utils.toArray<HTMLElement>(
-        sectionElement.querySelectorAll("[data-challenge-item]"),
-      );
-      const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
-
-      timeline.fromTo(
-        sectionElement,
-        {
-          opacity: 0,
-          y: 28,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.65,
-        },
-      );
-
-      if (challengeItems.length > 0) {
-        timeline.from(
-          challengeItems,
-          {
-            opacity: 0,
-            y: 14,
-            duration: 0.45,
-            stagger: 0.1,
-          },
-          "-=0.35",
-        );
       }
 
       barRefs.current.forEach((bar, index) => {
@@ -90,32 +66,40 @@ export default function ChallengeProgress({ items }: ChallengeProgressProps) {
   return (
     <section
       ref={sectionRef}
-      className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-[0_16px_34px_-24px_rgba(16,185,129,0.55)] sm:p-6 dark:border-emerald-900/60 dark:bg-slate-900"
+      className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
     >
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.challenge.title")}</h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{t("dashboard.challenge.subtitle")}</p>
-      <ul className="mt-4 space-y-4">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-base font-semibold text-slate-950 dark:text-white">{t("dashboard.challenge.title")}</h2>
+          <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{t("dashboard.challenge.subtitle")}</p>
+        </div>
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+          <Target className="h-4 w-4" aria-hidden="true" />
+        </span>
+      </div>
+      <ul className="mt-5 space-y-4">
         {items.map((item, index) => {
           const progress = getProgressPercentage(item.current, item.target);
+          const Icon = challengeIconMap[item.id] ?? Target;
 
           return (
             <li key={item.id} data-challenge-item>
               <div className="mb-2 flex items-center justify-between">
-                <p className="text-sm text-slate-700 dark:text-slate-200">
-                  <span className="mr-1" aria-hidden>
-                    {item.icon}
+                <p className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300" aria-hidden="true">
+                    <Icon className="h-4 w-4" />
                   </span>
                   {item.title}
                 </p>
-                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">{progress}%</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{progress}%</p>
               </div>
-              <div className="h-2.5 rounded-full bg-emerald-100 dark:bg-emerald-950/50">
+              <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
                   ref={(element) => {
                     barRefs.current[index] = element;
                   }}
                   data-progress-width={`${progress}%`}
-                  className="h-2.5 rounded-full bg-linear-to-r from-emerald-500 to-lime-400"
+                  className="h-2 rounded-full bg-emerald-500"
                   style={{ width: "0%" }}
                 />
               </div>

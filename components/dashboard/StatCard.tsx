@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { BarChart3, Leaf, Target, Trophy, type LucideIcon } from "lucide-react";
 
 import type { DashboardStatItem } from "@/types";
 
@@ -11,60 +10,42 @@ interface StatCardProps {
 }
 
 const toneClassMap: Record<DashboardStatItem["tone"], string> = {
-  emerald: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
-  sky: "bg-teal-50 text-emerald-700 dark:bg-teal-950/50 dark:text-emerald-300",
-  amber: "bg-lime-50 text-emerald-700 dark:bg-lime-950/50 dark:text-emerald-300",
-  violet: "bg-emerald-100/70 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  emerald: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
+  sky: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300",
+  amber: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
+  violet: "bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300",
+};
+
+const iconMap: Record<string, LucideIcon> = {
+  points: Trophy,
+  level: BarChart3,
+  recycled: Leaf,
+  badge: Target,
 };
 
 export default function StatCard({ item, index }: StatCardProps) {
-  const cardRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!cardRef.current) {
-        return;
-      }
-
-      gsap.fromTo(
-        cardRef.current,
-        {
-          opacity: 0,
-          y: 26,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          delay: index * 0.1,
-          duration: 0.55,
-          ease: "power2.out",
-        },
-      );
-    }, cardRef);
-
-    return () => {
-      ctx.revert();
-    };
-  }, [index]);
+  const Icon = iconMap[item.id] ?? BarChart3;
 
   return (
     <article
-      ref={cardRef}
-      className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-[0_12px_32px_-24px_rgba(16,185,129,0.6)] transition hover:-translate-y-0.5 dark:border-emerald-900/60 dark:bg-slate-900"
+      className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-emerald-200 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-emerald-900/70"
+      style={{ transitionDelay: `${index * 20}ms` }}
     >
       <div className="flex items-start justify-between">
-        <p className={`inline-flex h-11 w-11 items-center justify-center rounded-xl text-xl ${toneClassMap[item.tone]}`} aria-hidden>
-          {item.icon}
-        </p>
-        <span className="mt-1 h-2 w-2 rounded-full bg-emerald-300 dark:bg-emerald-600" aria-hidden="true" />
+        <span className={`inline-flex h-9 w-9 items-center justify-center rounded-xl ${toneClassMap[item.tone]}`} aria-hidden="true">
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+          {item.progressPercent}%
+        </span>
       </div>
 
-      <p className="mt-3 text-xs font-medium tracking-wide text-slate-500 dark:text-slate-400">{item.label}</p>
-      <p className="mt-1 text-xl font-bold text-emerald-700 dark:text-emerald-300">{item.value}</p>
-      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.caption}</p>
+      <p className="mt-4 text-xs font-medium tracking-wide text-slate-500 dark:text-slate-400">{item.label}</p>
+      <p className="mt-1 truncate text-xl font-semibold text-slate-950 dark:text-white">{item.value}</p>
+      <p className="mt-1 min-h-8 text-xs leading-4 text-slate-500 dark:text-slate-400">{item.caption}</p>
 
       <div
-        className="mt-3 h-1.5 w-full max-w-24 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-950/50"
+        className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
         aria-label={`${item.label} progress ${item.progressPercent}%`}
         role="progressbar"
         aria-valuemin={0}
@@ -72,7 +53,7 @@ export default function StatCard({ item, index }: StatCardProps) {
         aria-valuenow={item.progressPercent}
       >
         <div
-          className="h-full rounded-full bg-linear-to-r from-emerald-500 to-lime-400 transition-[width] duration-500"
+          className="h-full rounded-full bg-emerald-500 transition-[width] duration-500"
           style={{ width: `${item.progressPercent}%` }}
         />
       </div>
