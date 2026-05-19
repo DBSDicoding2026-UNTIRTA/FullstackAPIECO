@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -15,10 +15,34 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
+const variants = {
+  emerald: {
+    card: "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30",
+    text: "text-emerald-600 dark:text-emerald-300",
+    barBg: "bg-emerald-200 dark:bg-emerald-800",
+    bar: "bg-emerald-500 dark:bg-emerald-400",
+  },
+  blue: {
+    card: "border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20",
+    text: "text-blue-600 dark:text-blue-300",
+    barBg: "bg-blue-200 dark:bg-blue-800",
+    bar: "bg-blue-500 dark:bg-blue-400",
+  },
+} as const;
+
 export default function DemoPreviewSection() {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const mockupRef = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setMounted(true);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     if (!sectionRef.current || !contentRef.current || !mockupRef.current) return;
@@ -66,23 +90,28 @@ export default function DemoPreviewSection() {
     return () => ctx.revert();
   }, []);
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <section
+      suppressHydrationWarning
       ref={sectionRef}
-      className="bg-linear-to-b from-white via-emerald-50/40 to-white px-4 py-20 sm:px-6 md:py-28 lg:px-8"
+      className="bg-linear-to-b from-white via-emerald-50/40 to-white px-4 py-20 sm:px-6 md:py-28 lg:px-8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div ref={contentRef} className="flex flex-col gap-6">
-            <span className="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">
+            <span className="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 dark:border-emerald-900/40 dark:bg-slate-900/80 dark:text-emerald-300">
               Demo Aplikasi
             </span>
 
-            <h2 className="text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
+            <h2 className="text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl dark:text-white">
               Lihat Cara AI Membantu Memilah Sampah
             </h2>
 
-            <p className="max-w-xl text-lg leading-8 text-slate-600">
+            <p className="max-w-xl text-lg leading-8 text-slate-600 dark:text-slate-300">
               Pilah Yuk!! membantu pengguna mengenali jenis sampah dari gambar,
               lalu memberikan poin, badge, dan progress ramah lingkungan.
             </p>
@@ -111,21 +140,21 @@ export default function DemoPreviewSection() {
                 const Icon = item.icon;
 
                 return (
-                <div key={item.title} className="flex items-start gap-4">
-                  <div className="shrink-0">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+                  <div key={item.title} className="flex items-start gap-4">
+                    <div className="shrink-0">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
                       <Icon className="h-5 w-5" />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-950 dark:text-white">
+                        {item.title}
+                      </h4>
+                      <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
+                        {item.description}
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-950">
-                      {item.title}
-                    </h4>
-                    <p className="text-sm leading-6 text-slate-600">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
                 );
               })}
             </div>
@@ -138,25 +167,25 @@ export default function DemoPreviewSection() {
 
           <div ref={mockupRef} className="relative">
             <div className="relative mx-auto aspect-square w-full max-w-md">
-              <div className="absolute -inset-8 rounded-3xl bg-linear-to-br from-emerald-200 to-lime-200 opacity-30 blur-2xl" />
+              <div className="absolute -inset-8 rounded-3xl bg-linear-to-br from-emerald-200 to-lime-200 opacity-30 blur-2xl dark:from-emerald-900/30 dark:to-lime-900/20 dark:opacity-20" />
 
-              <div className="relative overflow-hidden rounded-3xl border border-emerald-200 bg-white p-6 shadow-2xl shadow-emerald-900/10">
+              <div className="relative overflow-hidden rounded-3xl border border-emerald-200 bg-white/90 p-6 shadow-2xl shadow-emerald-900/10 backdrop-blur-xl dark:border-emerald-900/40 dark:bg-slate-900 dark:shadow-black/30">
                 <div className="mb-6 flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-br from-emerald-400 to-lime-500 text-white">
                     <Leaf className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-slate-950">Pilah Yuk!!</p>
-                    <p className="text-xs text-slate-500">AI Waste Scanner</p>
+                    <p className="font-bold text-slate-950 dark:text-white">Pilah Yuk!!</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">AI Waste Scanner</p>
                   </div>
                 </div>
 
-                <div className="mb-6 flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/50 p-8">
-                  <UploadCloud className="h-12 w-12 text-emerald-600" />
-                  <p className="text-center text-sm font-medium text-slate-600">
+                <div className="mb-6 flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/50 p-8 dark:border-emerald-800 dark:bg-slate-900 dark:text-slate-300">
+                  <UploadCloud className="h-12 w-12 text-emerald-600 dark:text-emerald-300" />
+                  <p className="text-center text-sm font-medium text-slate-600 dark:text-slate-300">
                     Upload foto sampahmu
                   </p>
-                  <p className="text-xs text-slate-400">JPG, PNG maks. 5MB</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-400">JPG, PNG maks. 5MB</p>
                 </div>
 
                 <div className="space-y-4">
@@ -179,14 +208,14 @@ export default function DemoPreviewSection() {
                   />
                 </div>
 
-                <div className="mt-6 flex justify-around border-t border-slate-200 pt-6">
+                <div className="mt-6 flex justify-around border-t border-slate-200 pt-6 dark:border-slate-800">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-emerald-500">28</p>
-                    <p className="text-xs text-slate-500">Hari ini</p>
+                    <p className="text-2xl font-bold text-emerald-500 dark:text-emerald-400">28</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Hari ini</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-lime-500">156</p>
-                    <p className="text-xs text-slate-500">Bulan ini</p>
+                    <p className="text-2xl font-bold text-lime-500 dark:text-lime-400">156</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Bulan ini</p>
                   </div>
                 </div>
               </div>
@@ -215,36 +244,22 @@ function ResultCard({
   color,
   widthClass,
 }: ResultCardProps) {
-  const colorClass =
-    color === "emerald"
-      ? {
-          card: "border-emerald-200 bg-emerald-50",
-          text: "text-emerald-600",
-          barBg: "bg-emerald-200",
-          bar: "bg-emerald-500",
-        }
-      : {
-          card: "border-blue-200 bg-blue-50",
-          text: "text-blue-600",
-          barBg: "bg-blue-200",
-          bar: "bg-blue-500",
-        };
-
-        const Icon = icon;
+  const colorClass = variants[color];
+  const Icon = icon;
 
   return (
     <div className={`rounded-xl border p-4 ${colorClass.card}`}>
       <div className="mb-2 flex items-start justify-between">
         <div>
-          <p className="text-sm font-bold text-slate-950">{title}</p>
+          <p className="text-sm font-bold text-slate-950 dark:text-white">{title}</p>
           <p className={`text-xs font-semibold ${colorClass.text}`}>
             {accuracy}
           </p>
         </div>
-        <Icon className="h-6 w-6 text-slate-700" />
+        <Icon className="h-6 w-6 text-slate-700 dark:text-slate-200" />
       </div>
 
-      <p className="mb-3 text-xs text-slate-600">
+      <p className="mb-3 text-xs text-slate-600 dark:text-slate-400">
         Poin: <span className={`font-bold ${colorClass.text}`}>{points}</span>
       </p>
 

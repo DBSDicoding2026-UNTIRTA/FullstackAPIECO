@@ -6,7 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Database,
-  ExternalLink,
   Loader2,
   Search,
   Sparkles,

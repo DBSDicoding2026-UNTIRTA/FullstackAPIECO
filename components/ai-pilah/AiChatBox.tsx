@@ -170,15 +170,15 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
   return (
     <section
       ref={shellRef}
-      className="overflow-hidden rounded-[32px] border border-emerald-100/80 bg-white/90 shadow-[0_24px_80px_rgba(16,185,129,0.12)] backdrop-blur dark:border-emerald-900/50 dark:bg-slate-900"
+      className="overflow-hidden rounded-[32px] border border-emerald-100/80 bg-white/90 shadow-[0_24px_80px_rgba(16,185,129,0.12)] backdrop-blur dark:border-emerald-900/40 dark:bg-slate-900/70 dark:shadow-[0_0_30px_rgba(16,185,129,0.08)] dark:backdrop-blur-xl"
     >
-      <div className="flex flex-col gap-4 border-b border-emerald-50 bg-linear-to-r from-emerald-50/90 via-white to-white px-5 py-5 dark:border-emerald-900/50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 border-b border-emerald-50 bg-linear-to-r from-emerald-50/90 via-white to-white px-5 py-5 dark:border-emerald-900/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-emerald-600 to-emerald-400 text-white shadow-lg shadow-emerald-200/70">
             <Bot className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white sm:text-xl">
+            <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-xl">
               {text.title}
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-300">
@@ -188,7 +188,7 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-white px-3 py-1.5 text-emerald-700 shadow-sm dark:border-emerald-900/50 dark:bg-slate-950 dark:text-emerald-300">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-white px-3 py-1.5 text-emerald-700 shadow-sm dark:border-emerald-900/40 dark:bg-slate-950/70 dark:text-emerald-300 dark:backdrop-blur-xl">
             <Sparkles className="h-3.5 w-3.5" />
             {isAuthenticated ? text.welcome : text.emptySubtitle}
           </span>
@@ -204,14 +204,14 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
             </div>
           )}
 
-          <div className="max-h-[70vh] flex-1 overflow-y-auto rounded-[28px] border border-slate-100 bg-slate-50/70 p-4 scroll-smooth dark:border-emerald-900/50 dark:bg-slate-950 sm:p-5">
+          <div className="max-h-[70vh] flex-1 overflow-y-auto rounded-[28px] border border-slate-100 bg-slate-50/70 p-4 scroll-smooth dark:border-slate-800 dark:bg-slate-950/80 dark:backdrop-blur-xl sm:p-5">
             <div className="space-y-4">
               {!hasConversation && !isLoadingHistory && (
-                <div className="rounded-[28px] border border-dashed border-emerald-200 bg-white p-5 text-center shadow-sm dark:border-emerald-900/50 dark:bg-slate-900">
+                <div className="rounded-[28px] border border-dashed border-emerald-200 bg-white p-5 text-center shadow-sm dark:border-emerald-900/40 dark:bg-slate-900/80 dark:backdrop-blur-xl">
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300">
                     <Sparkles className="h-6 w-6" />
                   </div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {text.emptyTitle}
                   </p>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
@@ -244,10 +244,10 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
           </div>
         </div>
 
-        <aside className="border-t border-emerald-50 bg-linear-to-b from-emerald-50/80 to-white px-5 py-5 dark:border-emerald-900/50 dark:from-slate-900 dark:to-slate-900 lg:border-l lg:border-t-0">
+        <aside className="border-t border-emerald-50 bg-linear-to-b from-emerald-50/80 to-white px-5 py-5 dark:border-emerald-900/40 dark:from-slate-950 dark:to-slate-900 lg:border-l lg:border-t-0">
           <div className="space-y-4">
-            <div className="rounded-[28px] border border-emerald-100 bg-white p-5 shadow-sm dark:border-emerald-900/50 dark:bg-slate-950">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
+            <div className="rounded-[28px] border border-emerald-100 bg-white p-5 shadow-sm dark:border-emerald-900/40 dark:bg-slate-900/70 dark:backdrop-blur-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-300">
                 {text.title}
               </p>
               <ul className="mt-3 space-y-3 text-sm text-slate-600 dark:text-slate-300">
@@ -266,7 +266,7 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
               </ul>
             </div>
 
-            <div className="rounded-[28px] bg-linear-to-br from-emerald-600 to-emerald-500 p-5 text-white shadow-[0_20px_40px_rgba(16,185,129,0.25)]">
+            <div className="rounded-[28px] bg-linear-to-br from-emerald-600 to-emerald-500 p-5 text-white shadow-[0_20px_40px_rgba(16,185,129,0.25)] dark:shadow-[0_0_30px_rgba(16,185,129,0.12)]">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-50/80">
                 {text.send}
               </p>

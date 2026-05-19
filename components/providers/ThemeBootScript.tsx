@@ -1,3 +1,7 @@
+/* eslint-disable @next/next/no-before-interactive-script-outside-document */
+
+import Script from "next/script";
+
 import type { ThemePreference } from "@/types/settings";
 
 interface ThemeBootScriptProps {
@@ -9,6 +13,12 @@ export default function ThemeBootScript({ theme }: ThemeBootScriptProps) {
     (function () {
       try {
         var theme = ${JSON.stringify(theme)};
+        var storedTheme = localStorage.getItem("pilahyuk-theme");
+
+        if (storedTheme) {
+          theme = JSON.parse(storedTheme);
+        }
+
         var resolved = theme === "system"
           ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
           : theme;
@@ -20,6 +30,10 @@ export default function ThemeBootScript({ theme }: ThemeBootScriptProps) {
     })();
   `;
 
-  return <script id="theme-boot-script" dangerouslySetInnerHTML={{ __html: code }} />;
+  return (
+    <Script id="theme-boot-script" strategy="beforeInteractive">
+      {code}
+    </Script>
+  );
 }
 

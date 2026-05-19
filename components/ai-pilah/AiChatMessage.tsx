@@ -52,7 +52,7 @@ export function AiChatMessage({ message, locale }: AiChatMessageProps) {
       <div
         className={`max-w-[88%] rounded-[24px] px-4 py-3 text-sm leading-6 shadow-sm sm:max-w-[75%] ${
           isAssistant
-            ? "border border-emerald-100 bg-white text-slate-700 dark:border-emerald-900/50 dark:bg-slate-900 dark:text-slate-200"
+            ? "border border-emerald-100 bg-white/90 text-slate-700 dark:border-emerald-900/40 dark:bg-slate-900/80 dark:text-slate-100 dark:backdrop-blur-xl"
             : "bg-linear-to-r from-emerald-600 to-emerald-500 text-white"
         }`}
       >
@@ -65,7 +65,7 @@ export function AiChatMessage({ message, locale }: AiChatMessageProps) {
       </div>
 
       {!isAssistant && (
-        <div className="flex h-10 w-10 flex-none items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm">
+        <div className="flex h-10 w-10 flex-none items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm dark:shadow-[0_0_24px_rgba(16,185,129,0.18)]">
           <UserRound className="h-5 w-5" />
         </div>
       )}
