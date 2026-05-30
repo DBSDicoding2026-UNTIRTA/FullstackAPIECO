@@ -151,7 +151,7 @@ export const helpContent: Record<HelpLanguage, HelpContent> = {
       email: "CC26-PSU182@student.devacademy.id",
       githubUrl: "https://github.com/DBSDicoding2026-UNTIRTA/FullstackAPIECO",
       teamTitle: "Tim Pengembang",
-      teamDescription: "Capstone team PilahYuk untuk fullstack, AI, dan machine learning.",
+      teamDescription: "Capstone team PilahYuk untuk fullstack, AI, dan Data Scientist.",
       responseTime: "Estimasi respons: 1-2 hari kerja",
       members: supportMembers,
     },
