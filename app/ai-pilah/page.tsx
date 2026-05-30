@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { AiPilahSidebar } from "@/components/ai-pilah/AiPilahSidebar";
 import { AiPilahWorkspace } from "@/components/ai-pilah/AiPilahWorkspace";
 import AppNavbar from "@/components/shared/AppNavbar";
 import AppShell from "@/components/shared/AppShell";
@@ -24,12 +23,6 @@ export default async function AiPilahPage() {
     name: session.user?.name ?? null,
     image: session.user?.image ?? null,
     role: session.user?.role ?? "USER",
-  };
-
-  const sidebarText = {
-    title: t("aiPilah.sidebar.title"),
-    newChat: t("aiPilah.sidebar.newChat"),
-    empty: t("aiPilah.sidebar.empty"),
   };
 
   const workspaceText = {
@@ -57,14 +50,11 @@ export default async function AiPilahPage() {
         <AppNavbar user={navbarUser} />
 
         <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-          <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-            <AiPilahSidebar text={sidebarText} />
-            <AiPilahWorkspace
-              text={workspaceText}
-              chatText={chatText}
-              language={settings.preferences.language}
-            />
-          </div>
+          <AiPilahWorkspace
+            text={workspaceText}
+            chatText={chatText}
+            language={settings.preferences.language}
+          />
         </div>
       </main>
     </AppShell>

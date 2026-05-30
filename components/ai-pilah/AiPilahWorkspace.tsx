@@ -32,7 +32,6 @@ export function AiPilahWorkspace({ text, chatText, language }: AiPilahWorkspaceP
           </div>
         </div>
       </section>
-      <section id="riwayat-chat" className="sr-only" aria-hidden="true" />
     </div>
   );
 }

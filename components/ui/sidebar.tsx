@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { NavIcon } from "./NavIcon";
 import { useSettings } from "@/hooks/use-settings";
+import NeedHelpSheet, { NeedHelpMobileButton } from "@/components/dashboard/NeedHelpSheet";
 
 type Variant = "user" | "admin";
 
@@ -59,7 +60,7 @@ export function Sidebar({ userName = "User" }: SidebarProps) {
 
   return (
     <>
-      {/* Sidebar Tengah */}
+      {/* Sidebar */}
       <aside
         className="
         fixed left-6 top-1/2 -translate-y-1/2
@@ -103,10 +104,22 @@ export function Sidebar({ userName = "User" }: SidebarProps) {
         </div>
 
         {/* Help */}
-        <NavIcon icon={HelpCircle} label={t("nav.help")} variant="sidebar" active={false} />
+        <NeedHelpSheet
+          trigger={
+            <NavIcon
+              icon={HelpCircle}
+              label={t("nav.help")}
+              variant="sidebar"
+              active={false}
+            />
+          }
+        />
       </aside>
 
       {/* Mobile */}
+      <div className="fixed bottom-22 right-4 z-50 md:hidden">
+        <NeedHelpMobileButton />
+      </div>
       <div className="fixed bottom-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 px-3 md:hidden">
         <nav className="flex justify-between rounded-3xl border border-emerald-100 bg-white/90 px-2 py-2 shadow-md transition-colors duration-300 dark:border-emerald-900/60 dark:bg-slate-950/90">
           {mobileRoutes.map((r) => (

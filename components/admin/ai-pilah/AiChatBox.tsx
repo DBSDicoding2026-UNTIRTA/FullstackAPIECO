@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSession } from "next-auth/react";
 import { Bot, Sparkles } from "lucide-react";
 import gsap from "gsap";
 
@@ -13,9 +12,7 @@ import type { LanguagePreference } from "@/types/settings";
 
 type AiChatRole = "user" | "assistant";
 
-interface AiChatHistoryResponse {
-  data: AiChatMessageData[];
-}
+
 
 interface AiChatReplyResponse {
   data: {
@@ -32,9 +29,7 @@ function createLocalMessage(role: AiChatRole, content: string): AiChatMessageDat
   };
 }
 
-function isChatMessageData(message: AiChatMessageData): message is AiChatMessageData {
-  return message.role === "user" || message.role === "assistant";
-}
+
 
 interface AiChatBoxProps {
   readonly text: AiPilahChatText;
@@ -42,10 +37,8 @@ interface AiChatBoxProps {
 }
 
 export function AiChatBox({ text, language }: AiChatBoxProps) {
-  const { status } = useSession();
   const shellRef = useRef<HTMLDivElement>(null);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
-  const hasLoadedHistoryRef = useRef(false);
   const welcomeMessage: AiChatMessageData = useMemo(
     () => ({ id: "ai-pilah-welcome", role: "assistant", content: text.welcome, createdAt: "" }),
     [text.welcome]
@@ -53,12 +46,10 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
 
   const [messages, setMessages] = useState<AiChatMessageData[]>([welcomeMessage]);
   const [input, setInput] = useState("");
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isAuthenticated = status === "authenticated";
-  const isBusy = isLoadingHistory || isSending;
+  const isBusy = isSending;
 
   useEffect(() => {
     const shell = shellRef.current;
@@ -81,44 +72,7 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
     });
   }, [messages.length, isBusy]);
 
-  useEffect(() => {
-    if (!isAuthenticated || hasLoadedHistoryRef.current) {
-      return;
-    }
 
-    hasLoadedHistoryRef.current = true;
-
-    const loadHistory = async () => {
-      setIsLoadingHistory(true);
-
-      try {
-        const response = await fetch("/api/ai-pilah?limit=50");
-
-        if (!response.ok) {
-          throw new Error("Gagal memuat riwayat chat");
-        }
-
-        const payload = (await response.json()) as AiChatHistoryResponse;
-
-        if (Array.isArray(payload.data) && payload.data.length > 0) {
-          setMessages((currentMessages) => {
-            if (currentMessages.length > 1) {
-              return currentMessages;
-            }
-
-            const history = payload.data.filter(isChatMessageData);
-            return [welcomeMessage, ...history];
-          });
-        }
-      } catch {
-        setError(text.error);
-      } finally {
-        setIsLoadingHistory(false);
-      }
-    };
-
-    void loadHistory();
-  }, [isAuthenticated, text.error, welcomeMessage]);
 
   const handleSend = async () => {
     const content = input.trim();
@@ -190,7 +144,7 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-white px-3 py-1.5 text-emerald-700 shadow-sm dark:border-emerald-900/50 dark:bg-slate-950 dark:text-emerald-300">
             <Sparkles className="h-3.5 w-3.5" />
-            {isAuthenticated ? text.welcome : text.emptySubtitle}
+            {text.welcome}
           </span>
         </div>
       </div>
@@ -206,7 +160,7 @@ export function AiChatBox({ text, language }: AiChatBoxProps) {
 
           <div className="max-h-[70vh] flex-1 overflow-y-auto rounded-[28px] border border-slate-100 bg-slate-50/70 p-4 scroll-smooth dark:border-emerald-900/50 dark:bg-slate-950 sm:p-5">
             <div className="space-y-4">
-              {!hasConversation && !isLoadingHistory && (
+              {!hasConversation && (
                 <div className="rounded-[28px] border border-dashed border-emerald-200 bg-white p-5 text-center shadow-sm dark:border-emerald-900/50 dark:bg-slate-900">
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300">
                     <Sparkles className="h-6 w-6" />

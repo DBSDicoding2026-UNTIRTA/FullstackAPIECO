@@ -1,4 +1,4 @@
-import { BarChart3, BookOpenText, History, MessageSquareText } from "lucide-react";
+import { MessageSquareText } from "lucide-react";
 
 import type { AiPilahSidebarText } from "./types";
 
@@ -12,21 +12,6 @@ export function AiPilahSidebar({ text }: AiPilahSidebarProps) {
       label: text.newChat,
       href: "#chat-ai",
       icon: MessageSquareText,
-    },
-    {
-      label: text.title,
-      href: "#riwayat-chat",
-      icon: History,
-    },
-    {
-      label: text.newChat,
-      href: "#chat-ai",
-      icon: BookOpenText,
-    },
-    {
-      label: text.title,
-      href: "#riwayat-chat",
-      icon: BarChart3,
     },
   ] as const;
 

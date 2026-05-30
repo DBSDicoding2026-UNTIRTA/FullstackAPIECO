@@ -12,9 +12,7 @@ const chatRequestSchema = z.object({
   message: z.string().trim().min(1).max(1000),
 });
 
-const chatHistoryQuerySchema = z.object({
-  limit: z.coerce.number().int().min(1).max(100).optional().default(50),
-});
+
 
 type AiChatRole = "user" | "assistant";
 
@@ -25,9 +23,7 @@ interface AiChatMessageDto {
   createdAt: string;
 }
 
-interface AiChatApiResponse {
-  data: AiChatMessageDto[];
-}
+
 
 interface AiChatReplyResponse {
   data: {
@@ -49,54 +45,7 @@ function serializeMessage(message: {
   };
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const query = chatHistoryQuerySchema.safeParse({
-      limit: request.nextUrl.searchParams.get("limit") ?? undefined,
-    });
-
-    if (!query.success) {
-      return NextResponse.json(
-        { error: "Invalid query parameters" },
-        { status: 400 }
-      );
-    }
-
-    const messages = await prisma.aiChatMessage.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-      take: query.data.limit,
-      select: {
-        id: true,
-        role: true,
-        content: true,
-        createdAt: true,
-      },
-    });
-
-    const payload: AiChatApiResponse = {
-      data: messages.map(serializeMessage),
-    };
-
-    return NextResponse.json(payload);
-  } catch (error) {
-    console.error("[AI_PILAH_HISTORY_ERROR]", error);
-    return NextResponse.json(
-      { error: "Failed to fetch chat history" },
-      { status: 500 }
-    );
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {

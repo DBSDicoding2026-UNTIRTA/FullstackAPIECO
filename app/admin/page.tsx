@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { BarChart3, Bot, Database, FileQuestion, Sparkles, Users } from "lucide-react";
+import { BarChart3, Bot, Database, FileQuestion, LifeBuoy, Sparkles, Users } from "lucide-react";
 
 import { authOptions } from "@/lib/auth";
 import AppShell from "@/components/shared/AppShell";
@@ -35,6 +35,12 @@ export default async function AdminPage() {
       description: t("admin.cards.users.description"),
       icon: Users,
       href: "/admin/manage-user",
+    },
+    {
+      title: t("admin.cards.supportTickets.title"),
+      description: t("admin.cards.supportTickets.description"),
+      icon: LifeBuoy,
+      href: "/admin/support-tickets",
     },
     {
       title: t("admin.cards.stats.title"),

@@ -11,14 +11,14 @@ export const teamData: TeamMember[] = [
   {
     id: 'sarah',
     name: 'Sarah Aulia Rahmah',
-    role: 'Machine Learning',
+    role: 'Data Scientist',
     dicodingId: 'CDCC318D6X2160',
     image: '/member/sarah.jpeg',
   },
   {
     id: 'nunu',
     name: 'Nurul Santi Hafifah',
-    role: 'Machine Learning',
+    role: 'Data Scientist',
     dicodingId: 'CDCC318D6X2161',
     image: '/member/nunu.jpeg',
   },
