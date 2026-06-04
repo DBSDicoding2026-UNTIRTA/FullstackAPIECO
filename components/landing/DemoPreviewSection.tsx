@@ -96,9 +96,10 @@ export default function DemoPreviewSection() {
 
   return (
     <section
+      id="demo"
       suppressHydrationWarning
       ref={sectionRef}
-      className="bg-linear-to-b from-white via-emerald-50/40 to-white px-4 py-20 sm:px-6 md:py-28 lg:px-8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
+      className="scroll-mt-28 bg-linear-to-b from-white via-emerald-50/40 to-white px-4 py-20 sm:px-6 md:py-28 lg:px-8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">

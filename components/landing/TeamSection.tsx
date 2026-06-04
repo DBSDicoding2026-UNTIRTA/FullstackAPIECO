@@ -138,7 +138,7 @@ export default function TeamSection(): JSX.Element {
   );
 
   return (
-    <section className="bg-white dark:bg-slate-950">
+    <section id="team" className="scroll-mt-28 bg-white dark:bg-slate-950">
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
         <div className="rounded-3xl bg-linear-to-b from-emerald-50 to-white p-8 dark:from-emerald-950/40 dark:to-slate-950">
           <div className="mb-8 text-center">
