@@ -16,6 +16,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/admin/statistik-upload": "admin.sidebar.stats",
   "/admin/monitoring-model": "admin.sidebar.monitoring",
   "/admin/dataset": "admin.sidebar.dataset",
+  "/admin/ai-pilah": "admin.sidebar.aiPilah",
   "/admin/users": "admin.sidebar.users",
   "/admin/model": "admin.sidebar.monitoring",
   "/settings": "admin.sidebar.settings",

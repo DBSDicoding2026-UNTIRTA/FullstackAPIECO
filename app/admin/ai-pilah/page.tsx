@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
 
-import AiPilahHeader from "@/components/admin/ai-pilah/AiPilahHeader";
-import AiPilahStats from "@/components/admin/ai-pilah/AiPilahStats";
-import { AiPilahSidebar } from "@/components/admin/ai-pilah/AiPilahSidebar";
-import { AiPilahWorkspace } from "@/components/admin/ai-pilah/AiPilahWorkspace";
+import { AiPilahWorkspace } from "@/components/ai-pilah/AiPilahWorkspace";
 import AppShell from "@/components/shared/AppShell";
+import { requireAdmin } from "@/lib/admin-auth";
 import { translate } from "@/lib/i18n/dictionaries";
 import { getGlobalSettingsForSession } from "@/lib/settings/server";
-import { requireAdmin } from "@/lib/admin-auth";
-import prisma from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "AI Pilah — Admin",
+  title: "AI Pilah | Admin",
   description:
-    "Panel admin untuk memantau riwayat percakapan AI Pilah dan statistik terkait.",
+    "Asisten chat AI untuk tanya sampah, daur ulang, dan tips memilah secara singkat dan jelas.",
 };
 
 export default async function AdminAiPilahPage() {
@@ -24,15 +20,6 @@ export default async function AdminAiPilahPage() {
     key: Parameters<typeof translate>[1],
     values?: Record<string, string | number>,
   ) => translate(settings.preferences.language, key, values);
-
-  const sidebarText = {
-    title: t("aiPilah.sidebar.title"),
-    newChat: t("aiPilah.sidebar.newChat"),
-    empty: t("aiPilah.sidebar.empty"),
-  };
-
-  const headerTitle = t("aiPilah.admin.title");
-  const headerSubtitle = t("aiPilah.admin.subtitle");
 
   const workspaceText = {
     title: t("aiPilah.title"),
@@ -51,49 +38,15 @@ export default async function AdminAiPilahPage() {
     error: t("aiPilah.error"),
   };
 
-  /* ── Server-side stats ── */
-  const totalChats = await prisma.aiChatMessage.count();
-
-  const since = new Date();
-  since.setDate(since.getDate() - 7);
-
-  const activeUsersRows = await prisma.aiChatMessage.findMany({
-    where: { createdAt: { gte: since }, userId: { not: null } },
-    select: { userId: true },
-  });
-
-  const activeUsers = new Set(activeUsersRows.map((r) => r.userId)).size;
-
-  const latestMessages = await prisma.aiChatMessage.findMany({
-    take: 10,
-    orderBy: { createdAt: "desc" },
-    select: { id: true, role: true, content: true, createdAt: true, userId: true },
-  });
-
-  const statsLabels = {
-    totalChats: t("aiPilah.admin.totalChats"),
-    activeUsers: t("aiPilah.admin.activeUsers"),
-    latestMessages: t("aiPilah.admin.latestMessages"),
-  };
-
   return (
     <AppShell variant="admin">
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-6">
-          <AiPilahHeader title={headerTitle} subtitle={headerSubtitle} />
-
-          <AiPilahStats
-            totalChats={totalChats}
-            activeUsers={activeUsers}
-            latestMessagesCount={latestMessages.length}
-            locale={settings.preferences.language}
-            labels={statsLabels}
+      <div className="relative min-h-[calc(100vh-5rem)] overflow-hidden text-slate-900 transition-colors duration-300 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_36%),radial-gradient(circle_at_top_right,rgba(236,253,245,0.96),transparent_30%),linear-gradient(180deg,#ffffff_0%,#f7fffb_55%,#eefdf5_100%)] before:pointer-events-none before:absolute before:inset-0 before:content-[''] before:bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.08),transparent_45%)] after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[420px] after:w-[420px] after:-translate-x-1/2 after:rounded-full after:content-[''] after:bg-emerald-500/10 after:blur-3xl dark:text-white dark:bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_30%),radial-gradient(circle_at_top_right,rgba(5,150,105,0.08),transparent_24%),linear-gradient(180deg,#020617_0%,#07111f_45%,#020617_100%)] dark:before:bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.06),transparent_45%)] dark:after:bg-emerald-500/10 md:min-h-[calc(100vh-4rem)]">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+          <AiPilahWorkspace
+            text={workspaceText}
+            chatText={chatText}
+            language={settings.preferences.language}
           />
-
-          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-            <AiPilahSidebar text={sidebarText} />
-            <AiPilahWorkspace text={workspaceText} chatText={chatText} language={settings.preferences.language} />
-          </div>
         </div>
       </div>
     </AppShell>

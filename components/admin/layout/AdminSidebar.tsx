@@ -41,7 +41,7 @@ function getAdminRoutes(t: (key: string) => string): {
       { label: t("admin.sidebar.stats"), href: "/admin/statistik-upload", icon: BarChart3 },
       { label: t("admin.sidebar.monitoring"), href: "/admin/monitoring-model", icon: Bot },
       { label: t("admin.sidebar.dataset"), href: "/admin/dataset", icon: Database },
-      { label: t("AI PilahYuk"), href: "/admin/ai-pilah", icon: Bot },
+      { label: t("admin.sidebar.aiPilah"), href: "/admin/ai-pilah", icon: Bot },
     ],
     footer: [
       { label: t("admin.sidebar.settings"), href: "/settings", icon: Settings },
